@@ -50,15 +50,17 @@ notepad .env
 
 会弹出记事本打开 `.env` 文件，把里面 5 个占位符改成你的真实 key：
 
-| 变量名 | 填什么 |
-|---|---|
-| `DEEPSEEK_API_KEY` | DeepSeek 平台的 API key（api.deepseek.com） |
-| `AGNES_API_KEY` | Agnes 平台的 API key（api.agnes-ai.cn） |
-| `KIMI_API_KEY` | Kimi/月之暗面平台的 API key（api.moonshot.cn） |
-| `TUSHARE_TOKEN` | Tushare 的 token（股票数据） |
-| `TAVILY_API_KEY` | Tavily 搜索的 API key |
+| 变量名               | 填什么                                         |
+| -------------------- | ---------------------------------------------- |
+| `DEEPSEEK_API_KEY` | DeepSeek 平台的 API key（api.deepseek.com）    |
+| `AGNES_API_KEY`    | Agnes 平台的 API key（api.agnes-ai.cn）        |
+| `KIMI_API_KEY`     | Kimi/月之暗面平台的 API key（api.moonshot.cn） |
+| `TUSHARE_TOKEN`    | Tushare 的 token（股票数据）                   |
+| `TAVILY_API_KEY`   | Tavily 搜索的 API key                          |
 
 改完保存关闭记事本。
+
+> 💡 `.env` 不是隐藏文件，就在 `win-dev-setup` 文件夹根目录。以后想换 key，直接在文件夹里找到 `.env`，用记事本打开改就行（`notepad .env`）。
 
 **第 3 步：一键配置**
 
