@@ -30,25 +30,45 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 
 ## 新电脑使用步骤
 
-### 1. 安装前准备
+### 一键操作（推荐）
+
+克隆仓库后，**一条命令完成全部**（装软件 + 配置 + marketplaces + 插件 + skills + 字体）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File setup.ps1
+```
+
+setup.ps1 自动串联：
+1. winget 装软件（Git/Python/Node/Claude Code/wmux）
+2. 配置 Git / Bash / Claude / 镜像源
+3. 应用 .env（需先填）
+4. 自动运行 install-marketplaces.sh → install-plugins.sh → install-git-skills.sh → install-fonts.sh
+
+完成后只剩两个手动步骤：CC Switch 导入 providers、验证命令。
+
+---
+
+### 分步执行（可选，想单独跑某步时）
+
+#### 1. 安装前准备
 
 - 已装好 winget（Win10/11 自带，App Installer）
 - 已装好 Git for Windows（脚本会装，但先手动装可以更快）
 
-### 2. 一键安装软件
+#### 2. 一键安装软件
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 ```
 
-### 3. 填写 API keys
+#### 3. 填写 API keys
 
 ```powershell
 Copy-Item .env.example .env
 notepad .env   # 填 DEEPSEEK_API_KEY / AGNES_API_KEY / KIMI_API_KEY / TUSHARE_TOKEN / TAVILY_API_KEY
 ```
 
-### 4. 一键配置
+#### 4. 一键配置
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File setup.ps1
