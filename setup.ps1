@@ -14,13 +14,13 @@ function Write-Warn($msg)  { Write-Host "  ⚠ $msg" -ForegroundColor Yellow }
 Write-Host "win-dev-setup 开始" -ForegroundColor Magenta
 
 # ---------- 1. 安装软件 ----------
-Write-Step "1/5 安装软件（winget 默认路径）"
+Write-Step "1/6 安装软件（winget 默认路径）"
 if (Test-Path "$RepoRoot\scripts\install-software.ps1") {
     & powershell -ExecutionPolicy Bypass -File "$RepoRoot\scripts\install-software.ps1"
 }
 
 # ---------- 2. 拷 Git 配置 ----------
-Write-Step "2/5 配置 Git"
+Write-Step "2/6 配置 Git"
 $gitDest = "$Home\.gitconfig"
 if (Test-Path "$RepoRoot\config\git\.gitconfig") {
     Copy-Item "$RepoRoot\config\git\.gitconfig" $gitDest -Force
@@ -30,7 +30,7 @@ if (Test-Path "$RepoRoot\config\git\.gitconfig") {
 }
 
 # ---------- 3. 拷 Bash 配置 ----------
-Write-Step "3/5 配置 Bash（Git Bash 环境）"
+Write-Step "3/6 配置 Bash（Git Bash 环境）"
 foreach ($f in @('.bashrc', '.bash_profile', '.minttyrc')) {
     $src = "$RepoRoot\config\bash\$f"
     if (Test-Path $src) {
@@ -40,7 +40,7 @@ foreach ($f in @('.bashrc', '.bash_profile', '.minttyrc')) {
 }
 
 # ---------- 4. 拷 Claude 配置 ----------
-Write-Step "4/5 配置 Claude Code"
+Write-Step "4/6 配置 Claude Code"
 $claudeDir = "$Home\.claude"
 if (-not (Test-Path $claudeDir)) { New-Item -ItemType Directory -Path $claudeDir -Force | Out-Null }
 
@@ -60,8 +60,25 @@ if (Test-Path "$RepoRoot\config\claude\skills") {
 Write-Ok "marketplaces 清单见 config/claude/marketplaces.json，安装方式："
 Write-Ok "  claude plugin marketplace add <owner>/<repo>"
 
-# ---------- 5. 应用 .env（API keys）----------
-Write-Step "5/5 应用 .env（API keys）"
+# ---------- 5. 配置国内镜像源 ----------
+Write-Step "5/6 配置国内镜像源（pip / npm）"
+
+# pip 清华源
+$pipDir = "$Home\.pip"
+if (Test-Path "$RepoRoot\config\python\pip.conf") {
+    if (-not (Test-Path $pipDir)) { New-Item -ItemType Directory -Path $pipDir -Force | Out-Null }
+    Copy-Item "$RepoRoot\config\python\pip.conf" "$pipDir\pip.conf" -Force
+    Write-Ok "已配置 pip 清华源 → $pipDir\pip.conf"
+}
+
+# npm npmmirror 镜像
+if (Test-Path "$RepoRoot\config\node\.npmrc") {
+    Copy-Item "$RepoRoot\config\node\.npmrc" "$Home\.npmrc" -Force
+    Write-Ok "已配置 npm npmmirror 源 → ~\.npmrc"
+}
+
+# ---------- 6. 应用 .env（API keys）----------
+Write-Step "6/6 应用 .env（API keys）"
 $envFile = "$RepoRoot\.env"
 if (Test-Path $envFile) {
     Write-Ok "检测到 .env，将占位符替换为真实值"

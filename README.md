@@ -11,9 +11,10 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 | Claude Code      | 全局 CLAUDE.md、skills、marketplaces | `config/claude/`           |
 | CC Switch        | providers（脱敏，仅第三方）、通用配置 | `config/cc-switch/`        |
 | Windows Terminal | settings.json（含 Maple Mono 字体引用）| `config/windows-terminal/` |
+| 国内镜像源       | pip 清华源、npm npmmirror            | `config/python/`、`config/node/` |
 | 字体             | Maple Mono NF CN（脚本下载安装）      | `scripts/install-fonts.sh` |
 
-> 说明：wmux 配置不备份（新电脑装 wmux 自动生成默认）；.gitconfig 的 mvimdiff/proxy 不备份（本机残留）；CC Switch 只备份第三方 provider（DeepSeek/Agnes/Kimi），官方类型自动生成。字体不存文件（~310MB），用脚本从 GitHub 下载。
+> 说明：wmux 配置不备份（新电脑装 wmux 自动生成默认）；.gitconfig 的 mvimdiff/proxy 不备份（本机残留，代理按需手动配）；CC Switch 只备份第三方 provider（DeepSeek/Agnes/Kimi），官方类型自动生成。字体不存文件（~310MB），用脚本从 GitHub 下载。
 
 ## 安装规范
 
