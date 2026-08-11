@@ -21,8 +21,11 @@ def load_db_path():
 
 def main():
     repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    providers_path = os.path.join(repo, 'config', 'cc-switch', 'providers.json')
-    common_path = os.path.join(repo, 'config', 'cc-switch', 'common_config.json')
+    # 优先读 .build/（setup.ps1 应用 .env 后生成，含真实 key），回退到 config/（占位符版）
+    build = os.path.join(repo, '.build', 'cc-switch')
+    config = os.path.join(repo, 'config', 'cc-switch')
+    providers_path = os.path.join(build, 'providers.json') if os.path.exists(os.path.join(build, 'providers.json')) else os.path.join(config, 'providers.json')
+    common_path = os.path.join(build, 'common_config.json') if os.path.exists(os.path.join(build, 'common_config.json')) else os.path.join(config, 'common_config.json')
     db_path = load_db_path()
 
     # 检查 .env 是否已应用（providers 里不应有 ${XXX} 占位符）
@@ -30,13 +33,13 @@ def main():
         providers = json.load(f)
     raw_providers = json.dumps(providers)
     if '${' in raw_providers:
-        print('✗ providers.json 里还有 ${KEY} 占位符！请先运行 apply-env.sh 应用 .env')
+        print('✗ providers.json 里还有 ${KEY} 占位符！请先运行 setup.ps1 或 apply-env.sh 应用 .env')
         sys.exit(1)
 
     with open(common_path, encoding='utf-8') as f:
         common_config = json.load(f)
     if '${' in json.dumps(common_config):
-        print('✗ common_config.json 里还有 ${KEY} 占位符！请先运行 apply-env.sh 应用 .env')
+        print('✗ common_config.json 里还有 ${KEY} 占位符！请先运行 setup.ps1 或 apply-env.sh 应用 .env')
         sys.exit(1)
 
     # 确认 CC Switch 未运行（数据库被锁则写入失败）

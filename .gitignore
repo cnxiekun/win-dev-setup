@@ -4,6 +4,9 @@
 *.env
 !*.env.example
 
+# 应用 .env 后的输出（含真实 key，永不提交）
+.build/
+
 # 任何真实 API key 文件
 *.key
 *_key.json

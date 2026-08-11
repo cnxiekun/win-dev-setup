@@ -62,12 +62,14 @@ setup.ps1 自动串联：
 powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 ```
 
-#### 3. 填写 API keys
+#### 3. 填写 API keys（⚠️ 必须在 setup.ps1 之前填）
 
 ```powershell
 Copy-Item .env.example .env
 notepad .env   # 填 DEEPSEEK_API_KEY / AGNES_API_KEY / KIMI_API_KEY / TUSHARE_TOKEN / TAVILY_API_KEY
 ```
+
+> `.env` 会被 `.gitignore` 排除；setup.ps1 应用后生成 `.build/`（含真实 key，同样被排除，绝不 commit）。config/ 保持占位符安全。
 
 #### 4. 一键配置
 

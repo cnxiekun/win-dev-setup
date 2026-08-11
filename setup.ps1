@@ -108,22 +108,24 @@ if (Test-Path $envFile) {
             $envMap[$matches[1]] = $matches[2]
         }
     }
-    # 遍历 config 下所有文件，替换 ${XXX} 占位符
+    # 输出到 .build/（不污染 config/，避免 key 被 commit）
+    $buildDir = "$RepoRoot\.build"
     $files = Get-ChildItem "$RepoRoot\config" -Recurse -File | Where-Object { $_.Extension -ne '.pyc' }
     foreach ($file in $files) {
         $content = [System.IO.File]::ReadAllText($file.FullName)
-        $original = $content
         foreach ($key in $envMap.Keys) {
             $placeholder = "\${$key}"
             $content = $content.Replace($placeholder, $envMap[$key])
         }
-        if ($content -ne $original) {
-            [System.IO.File]::WriteAllText($file.FullName, $content, (New-Object System.Text.UTF8Encoding $false))
-            Write-Ok "已应用 .env 到 $($file.Name)"
-        }
+        $rel = $file.FullName.Substring("$RepoRoot\config\".Length)
+        $dest = Join-Path $buildDir $rel
+        $destDir = Split-Path -Parent $dest
+        if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir -Force | Out-Null }
+        [System.IO.File]::WriteAllText($dest, $content, (New-Object System.Text.UTF8Encoding $false))
     }
+    Write-Ok "已生成 .build/ 目录（含真实 key，勿 commit）"
 } else {
-    Write-Warn "未找到 .env。请复制 .env.example 为 .env 并填写 API keys："
+    Write-Warn "未找到 .env。请先复制并填写："
     Write-Warn "  Copy-Item $RepoRoot\.env.example $RepoRoot\.env"
     Write-Warn "  notepad $RepoRoot\.env"
 }
