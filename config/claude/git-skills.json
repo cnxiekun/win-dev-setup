@@ -1,0 +1,20 @@
+{
+  "git_skills": [
+    {
+      "name": "guizang-ppt-skill",
+      "repo": "https://github.com/op7418/guizang-ppt-skill.git",
+      "branch": "main"
+    },
+    {
+      "name": "stock-analysis",
+      "repo": "https://github.com/liusai0820/Stock-Analysis-Skill.git",
+      "branch": "main"
+    }
+  ],
+  "manual_skills": [
+    "agnes-image",
+    "agnes-video",
+    "agnes-vision",
+    "update-plugins"
+  ]
+}

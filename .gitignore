@@ -1,0 +1,29 @@
+# ===== 敏感信息 =====
+.env
+.env.local
+*.env
+!*.env.example
+
+# 任何真实 API key 文件
+*.key
+*_key.json
+
+# ===== 系统/编辑器 =====
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# ===== 临时文件 =====
+*.log
+*.bak
+*.bak-*
+__pycache__/
+*.pyc
+
+# ===== 原始导出（含潜在敏感信息的中间文件）=====
+config/git/.gitconfig-raw
+
+# ===== 技能内部可能带 .git 的目录（防御）=====
+**/.git/

@@ -1,0 +1,96 @@
+[include]
+	path = .gitconfig.user
+
+[user]
+	name = cnxiekun
+	email = cnxiekun@163.com
+
+[color]
+	ui = true
+	branch = auto
+	diff = auto
+	status = auto
+	showbranch = auto
+	branch.current = yellow reverse
+	branch.local = yellow
+	branch.remote = green
+	diff.meta = yellow bold
+	diff.frag = magenta bold
+	diff.old = red
+	diff.new = green
+
+[alias]
+	a = add
+	chunkyadd = add --patch
+	snapshot = !git stash save snapshot: $(date) && git stash apply stash@{0}
+	snapshots = !git stash list --grep snapshot
+	recent-branches = !git for-each-ref --count=15 --sort=-committerdate refs/heads/ --format='%(refname:short)'
+	b = branch -v
+	c = commit -m
+	ca = commit -am
+	ci = commit
+	amend = commit --amend
+	ammend = commit --amend
+	co = checkout
+	nb = checkout -b
+	cp = cherry-pick -x
+	d = diff
+	dc = diff --cached
+	last = diff HEAD^
+	l = log --graph --date=short
+	changes = log --pretty=format:"%h %cr %cn %Cgreen%s%Creset" --name-status
+	short = log --pretty=format:"%h %cr %cn %Cgreen%s%Creset"
+	simple = log --pretty=format:" * %s"
+	shortnocolor = log --pretty=format:"%h %cr %cn %s"
+	pl = pull
+	ps = push
+	rc = rebase --continue
+	rs = rebase --skip
+	r = remote -v
+	unstage = reset HEAD
+	uncommit = reset --soft HEAD^
+	filelog = log -u
+	mt = mergetool
+	ss = stash
+	sl = stash list
+	sa = stash apply
+	sd = stash drop
+	s = status
+	st = status
+	stat = status
+	t = tag -n
+	svnr = svn rebase
+	svnd = svn dcommit
+	svnl = svn log --oneline --show-commit
+
+[core]
+	autocrlf = false
+	editor = vim
+	quotepath = false
+	excludesfile = ~/.gitignore_global
+	filemode = false
+	preloadindex = true
+	fscache = true
+
+[diff]
+	mnemonicprefix = true
+	algorithm = patience
+
+[merge]
+	summary = true
+	verbosity = 1
+	tool = mvimdiff
+
+[mergetool]
+	prompt = false
+	mvimdiff.cmd = mvim -c 'Gdiff' $MERGED
+	mvimdiff.keepbackup = false
+
+[push]
+	default = upstream
+
+[http]
+	proxy = http://127.0.0.1:7897
+
+[https]
+	proxy = http://127.0.0.1:7897

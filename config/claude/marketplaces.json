@@ -1,0 +1,42 @@
+[
+  {
+    "name": "anthropic-agent-skills",
+    "url": "https://github.com/anthropics/skills.git"
+  },
+  {
+    "name": "baoyu-skills",
+    "url": "https://github.com/JimLiu/baoyu-skills.git"
+  },
+  {
+    "name": "claude-code-zh-cn",
+    "url": "https://github.com/taekchef/claude-code-zh-cn.git"
+  },
+  {
+    "name": "claude-hud",
+    "url": "https://github.com/jarrodwatts/claude-hud.git"
+  },
+  {
+    "name": "claude-plugins-official",
+    "url": "https://github.com/anthropics/claude-plugins-official.git"
+  },
+  {
+    "name": "frontend-slides",
+    "url": "https://github.com/zarazhangrui/frontend-slides.git"
+  },
+  {
+    "name": "planning-with-files",
+    "url": "https://github.com/othmanadi/planning-with-files.git"
+  },
+  {
+    "name": "pm-skills",
+    "url": "https://github.com/phuryn/pm-skills.git"
+  },
+  {
+    "name": "ppt-master",
+    "url": "https://github.com/hugohe3/ppt-master.git"
+  },
+  {
+    "name": "web-access",
+    "url": "https://github.com/eze-is/web-access.git"
+  }
+]

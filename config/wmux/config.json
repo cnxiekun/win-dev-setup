@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "daemon": {
+    "pipeName": "\\\\.\\pipe\\wmux-daemon-Huawei",
+    "logLevel": "info",
+    "autoStart": true,
+    "idleShutdownMinutes": 5,
+    "memWarnMb": 500,
+    "memReapMb": 750,
+    "memBlockMb": 1024,
+    "livenessIntervalSec": 15,
+    "snapshotIntervalSec": 30
+  },
+  "session": {
+    "defaultShell": "D:\\软件\\Git\\bin\\bash.exe",
+    "defaultCols": 120,
+    "defaultRows": 30,
+    "bufferSizeMb": 8,
+    "bufferMaxMb": 64,
+    "deadSessionTtlHours": 24,
+    "deadSessionDumpBuffer": true,
+    "maxSessions": 200,
+    "suspendedTtlHours": 168,
+    "detachedTtlHours": 8
+  },
+  "channels": {
+    "trashTtlHours": 720,
+    "autoTrashArchivedHours": 0
+  },
+  "lanlink": {
+    "enabled": false,
+    "nic": null
+  }
+}
