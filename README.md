@@ -10,9 +10,10 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 | Bash             | .bashrc、.bash_profile、.minttyrc    | `config/bash/`             |
 | Claude Code      | 全局 CLAUDE.md、skills、marketplaces | `config/claude/`           |
 | CC Switch        | providers（脱敏，仅第三方）、通用配置 | `config/cc-switch/`        |
-| Windows Terminal | settings.json                        | `config/windows-terminal/` |
+| Windows Terminal | settings.json（含 Maple Mono 字体引用）| `config/windows-terminal/` |
+| 字体             | Maple Mono NF CN（脚本下载安装）      | `scripts/install-fonts.sh` |
 
-> 说明：wmux 配置不备份（新电脑装 wmux 自动生成默认）；.gitconfig 的 mvimdiff/proxy 不备份（本机残留）；CC Switch 只备份第三方 provider（DeepSeek/Agnes/Kimi），官方类型自动生成。
+> 说明：wmux 配置不备份（新电脑装 wmux 自动生成默认）；.gitconfig 的 mvimdiff/proxy 不备份（本机残留）；CC Switch 只备份第三方 provider（DeepSeek/Agnes/Kimi），官方类型自动生成。字体不存文件（~310MB），用脚本从 GitHub 下载。
 
 ## 安装规范
 
@@ -62,6 +63,10 @@ bash scripts/install-git-skills.sh
 # 自动添加 Claude Code marketplaces（本质是 git clone，用官方 CLI 自动注册）
 bash scripts/install-marketplaces.sh
 # 清单见 config/claude/marketplaces.json（10 个）
+
+# 安装 Maple Mono NF CN 字体（开源，从 GitHub Releases 下载 ~152MB）
+bash scripts/install-fonts.sh
+# 默认 v7.9，可指定版本: bash scripts/install-fonts.sh v7.8
 
 # 安装插件（marketplace 添加后，逐个安装）
 claude plugin install <plugin>@<marketplace>
