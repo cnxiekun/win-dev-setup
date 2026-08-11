@@ -14,8 +14,6 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 | 国内镜像源       | pip 清华源、npm npmmirror            | `config/python/`、`config/node/` |
 | 字体             | Maple Mono NF CN（脚本下载安装）      | `scripts/install-fonts.sh` |
 
-> 说明：wmux 配置不备份（新电脑装 wmux 自动生成默认）；.gitconfig 的 mvimdiff/proxy 不备份（本机残留，代理按需手动配）；CC Switch 只备份第三方 provider（DeepSeek/Agnes/Kimi），官方类型自动生成。字体不存文件（~310MB），用脚本从 GitHub 下载。
-
 ## 安装规范
 
 所有软件用 **winget 装默认路径**（`C:\Program Files` 等），**禁止自定义盘/中文目录**（`D:\软件` 这种会导致 wmux 编码 bug）。
@@ -32,85 +30,46 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 
 ### 一键操作（推荐）
 
-克隆仓库后，**一条命令完成全部**（装软件 + 配置 + marketplaces + 插件 + skills + 字体）：
+克隆仓库后，**先填 .env，再一条命令完成全部**：
 
 ```powershell
+Copy-Item .env.example .env
+notepad .env   # 填 DEEPSEEK_API_KEY / AGNES_API_KEY / KIMI_API_KEY / TUSHARE_TOKEN / TAVILY_API_KEY
+
 powershell -ExecutionPolicy Bypass -File setup.ps1
 ```
 
 setup.ps1 自动串联：
 1. winget 装软件（Git/Python/Node/Claude Code/wmux）
 2. 配置 Git / Bash / Claude / 镜像源
-3. 应用 .env（需先填）
+3. 应用 .env
 4. 自动运行 install-marketplaces.sh → install-plugins.sh → install-git-skills.sh → install-fonts.sh
 5. 自动导入 CC Switch 配置（providers + 通用配置）
 
-完成后只需手动填 `.env`（API keys）。
-
 ---
 
-### 分步执行（可选，想单独跑某步时）
-
-#### 1. 安装前准备
-
-- 已装好 winget（Win10/11 自带，App Installer）
-- 已装好 Git for Windows（脚本会装，但先手动装可以更快）
-
-#### 2. 一键安装软件
+### 分步执行（可选，单独跑某步时）
 
 ```powershell
+# 只装软件（winget）
 powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 ```
 
-#### 3. 填写 API keys（⚠️ 必须在 setup.ps1 之前填）
-
-```powershell
-Copy-Item .env.example .env
-notepad .env   # 填 DEEPSEEK_API_KEY / AGNES_API_KEY / KIMI_API_KEY / TUSHARE_TOKEN / TAVILY_API_KEY
-```
-
-> `.env` 会被 `.gitignore` 排除；setup.ps1 应用后生成 `.build/`（含真实 key，同样被排除，绝不 commit）。config/ 保持占位符安全。
-
-#### 4. 一键配置
-
-```powershell
-powershell -ExecutionPolicy Bypass -File setup.ps1
-```
-
-### 5. 自动安装 skills 和 marketplaces
-
 ```bash
-# 安装 git 来源的 Claude skills（clone 后自带 .git，可 git pull 更新）
+# 只装 git 来源的 skills（clone 后自带 .git，可 git pull 更新）
 bash scripts/install-git-skills.sh
-# 清单见 config/claude/git-skills.json（guizang-ppt-skill、stock-analysis）
 
-# 自动添加 Claude Code marketplaces（本质是 git clone，用官方 CLI 自动注册）
+# 只添加 marketplaces（10 个）
 bash scripts/install-marketplaces.sh
-# 清单见 config/claude/marketplaces.json（10 个）
 
-# 自动安装插件（全装，按清单设置启用状态）
+# 只装插件（15 个，按清单设置启用状态）
 bash scripts/install-plugins.sh
-# 清单见 config/claude/plugins.json（15 个，11 启用 / 4 禁用但保留）
 
-# 安装 Maple Mono NF CN 字体（开源，从 GitHub Releases 下载 ~152MB）
+# 只装 Maple Mono NF CN 字体（默认 v7.9）
 bash scripts/install-fonts.sh
-# 默认 v7.9，可指定版本: bash scripts/install-fonts.sh v7.8
 
-# CC Switch 配置（setup.ps1 会自动导入；单独导入时运行）
+# 只导入 CC Switch 配置（需先填 .env）
 python scripts/import-cc-switch.py
-# 会覆盖写 providers（5 个 claude provider）+ common_config 到 cc-switch.db
-
-# Claude skills：setup.ps1 已拷手动放置的到 ~/.claude/skills/
-#   git 来源的（guizang-ppt-skill/stock-analysis）用上面脚本 clone，可 git pull 更新
-```
-
-### 6. 验证
-
-```bash
-git --version
-python --version
-node --version
-claude --version
 ```
 
 ## 敏感信息说明
@@ -127,8 +86,13 @@ win-dev-setup/
 ├── .env.example               # API key 占位符模板
 ├── .gitignore
 ├── config/                    # 脱敏配置
-│   ├── git/  bash/  claude/  cc-switch/  wmux/  windows-terminal/
+│   ├── git/  bash/  claude/  cc-switch/  windows-terminal/
 └── scripts/
     ├── install-software.ps1   # winget 批量安装
+    ├── install-marketplaces.sh # 添加 marketplaces
+    ├── install-plugins.sh     # 安装插件
+    ├── install-git-skills.sh  # clone git skills
+    ├── install-fonts.sh       # 安装 Maple Mono 字体
+    ├── import-cc-switch.py    # 导入 CC Switch 配置
     └── apply-env.sh           # (bash) 应用 .env → .build/
 ```
