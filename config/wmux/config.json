@@ -1,7 +1,7 @@
 {
   "version": 1,
   "daemon": {
-    "pipeName": "\\\\.\\pipe\\wmux-daemon-Huawei",
+    "pipeName": "AUTO-GENERATED",
     "logLevel": "info",
     "autoStart": true,
     "idleShutdownMinutes": 5,
@@ -12,7 +12,7 @@
     "snapshotIntervalSec": 30
   },
   "session": {
-    "defaultShell": "D:\\软件\\Git\\bin\\bash.exe",
+    "defaultShell": "C:\\Program Files\\Git\\bin\\bash.exe",
     "defaultCols": 120,
     "defaultRows": 30,
     "bufferSizeMb": 8,

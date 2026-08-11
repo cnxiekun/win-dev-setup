@@ -23,7 +23,7 @@
   },
   "language": "Chinese",
   "alwaysChineseReply": true,
-  "shell": "D:/软件/Git/usr/bin/bash.exe",
+  "shell": "C:/Program Files/Git/usr/bin/bash.exe",
   "permissions": {
     "defaultMode": "default",
     "allow": [
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"C:\\Users\\Huawei.SK-20240415RTON\\.wmux\\hooks\\wmux-bridge.mjs\" Stop"
+            "command": "node \"%USERPROFILE%\\.wmux\\hooks\\wmux-bridge.mjs\" Stop"
           }
         ]
       }
@@ -56,7 +56,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"C:\\Users\\Huawei.SK-20240415RTON\\.wmux\\hooks\\wmux-bridge.mjs\" SubagentStop"
+            "command": "node \"%USERPROFILE%\\.wmux\\hooks\\wmux-bridge.mjs\" SubagentStop"
           }
         ]
       }
@@ -67,7 +67,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"C:\\Users\\Huawei.SK-20240415RTON\\.wmux\\hooks\\wmux-bridge.mjs\" SessionStart"
+            "command": "node \"%USERPROFILE%\\.wmux\\hooks\\wmux-bridge.mjs\" SessionStart"
           }
         ]
       }
@@ -314,7 +314,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "cols=${COLUMNS:-}; case \"$cols\" in \"\"|*[!0-9]*) cols=$(stty size 2>/dev/null </dev/tty | awk '{print $2}');; esac; case \"$cols\" in \"\"|*[!0-9]*) cols=120;; esac; export COLUMNS=$(( cols > 4 ? cols - 4 : 1 )); plugin_dir=$(ls -1d \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}\"/plugins/cache/*/claude-hud/*/ 2>/dev/null | sort -V | tail -1); exec \"/d/软件/nodejs/node.exe\" \"${plugin_dir}dist/index.js\"",
+    "command": "cols=${COLUMNS:-}; case \"$cols\" in \"\"|*[!0-9]*) cols=$(stty size 2>/dev/null </dev/tty | awk '{print $2}');; esac; case \"$cols\" in \"\"|*[!0-9]*) cols=120;; esac; export COLUMNS=$(( cols > 4 ? cols - 4 : 1 )); plugin_dir=$(ls -1d \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}\"/plugins/cache/*/claude-hud/*/ 2>/dev/null | sort -V | tail -1); exec \"C:/Program Files/nodejs/node.exe\" \"${plugin_dir}dist/index.js\"",
     "refreshInterval": 5
   }
 }

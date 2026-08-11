@@ -117,18 +117,23 @@ alias k9='kill -9'
 
 alias ..='cd ..'
 
-# VS Code
-alias code='"/d/软件/Microsoft VS Code/Code.exe"'
+# VS Code (winget 默认路径优先，回退到常见位置)
+if [ -f "$LOCALAPPDATA/Programs/Microsoft VS Code/Code.exe" ]; then
+  alias code='"$LOCALAPPDATA/Programs/Microsoft VS Code/Code.exe"'
+elif [ -f "/c/Program Files/Microsoft VS Code/Code.exe" ]; then
+  alias code='"/c/Program Files/Microsoft VS Code/Code.exe"'
+fi
 
 # btop (系统监控, winget 安装, 可执行文件名为 btop4win)
 alias btop='btop4win'
 
 export MSYS=enable_pcon
 
+# 个人项目快捷目录（按需修改）
 alias pro='cd /d/Personal/Projects'
 
-# npm global bin (Claude Code 等)
-export PATH="/c/Users/Huawei.SK-20240415RTON/AppData/Roaming/npm:$PATH"
+# npm global bin (Claude Code 等) — 动态检测用户目录
+export PATH="$HOME/AppData/Roaming/npm:$PATH"
 
 # pipx 安装的应用 (pylsp 等)
 export PATH="$HOME/.local/bin:$PATH"
@@ -137,10 +142,3 @@ export PATH="$HOME/.local/bin:$PATH"
 export LANG=zh_CN.UTF-8
 export LC_ALL=zh_CN.UTF-8
 export LC_CTYPE=zh_CN.UTF-8
-
-# === 清理 PATH 中的乱码路径 ===
-# wmux 等终端启动时，Windows 的中文路径（如 D:\软件\Python312）可能被错误编码成
-# U+FFFD 替换字符（乱码），导致 bash 认不出真实路径、跳过它去命中其他同名程序。
-# 这里把含 U+FFFD 的路径从 PATH 中剔除，让正常版路径能生效。
-export PATH=$(printf '%s\n' "$PATH" | tr ':' '\n' | grep -v $'\357\277\275' | paste -sd:)
-export PATH="/d/软件/Python312/Scripts:/d/软件/Python312:$PATH"
