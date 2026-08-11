@@ -60,26 +60,6 @@
     "provider_type": null
   },
   {
-    "id": "55fb64f3-9aeb-4920-9575-80686cb48661",
-    "app_type": "claude-desktop",
-    "name": "DeepSeek V4 Pro",
-    "settings_config": "{\"env\":{\"ANTHROPIC_BASE_URL\":\"https://api.deepseek.com/anthropic\",\"ANTHROPIC_AUTH_TOKEN\":\"${DEEPSEEK_API_KEY}\"}}",
-    "website_url": "https://platform.deepseek.com",
-    "category": "cn_official",
-    "created_at": 1784255982829,
-    "sort_index": null,
-    "notes": null,
-    "icon": "deepseek",
-    "icon_color": "#1E88E5",
-    "meta": "{\"claudeDesktopMode\":\"proxy\",\"claudeDesktopModelRoutes\":{\"claude-sonnet-5\":{\"model\":\"deepseek-v4-pro\",\"labelOverride\":\"deepseek-v4-pro\",\"supports1m\":true},\"claude-opus-4-8\":{\"model\":\"deepseek-v4-pro\",\"labelOverride\":\"deepseek-v4-pro\",\"supports1m\":true},\"claude-fable-5\":{\"model\":\"deepseek-v4-pro\",\"labelOverride\":\"deepseek-v4-pro\",\"supports1m\":true},\"claude-haiku-4-5\":{\"model\":\"deepseek-v4-pro\",\"labelOverride\":\"deepseek-v4-pro\",\"supports1m\":true}},\"apiFormat\":\"anthropic\"}",
-    "is_current": 0,
-    "in_failover_queue": 0,
-    "cost_multiplier": "1.0",
-    "limit_daily_usd": null,
-    "limit_monthly_usd": null,
-    "provider_type": null
-  },
-  {
     "id": "a50a8fac-2e2e-4774-acf4-22f865dc7298",
     "app_type": "claude",
     "name": "Kimi 2.7 Code",

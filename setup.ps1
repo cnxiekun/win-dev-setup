@@ -3,13 +3,36 @@
 # 新电脑环境恢复：装软件 + 拷配置 + 应用 .env
 # 用法: powershell -ExecutionPolicy Bypass -File setup.ps1
 # ============================================================
-$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'Continue'  # 容错：单个步骤失败不中断整体流程
 $RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Home = $env:USERPROFILE
 
 function Write-Step($msg) { Write-Host "`n=== $msg ===" -ForegroundColor Cyan }
 function Write-Ok($msg)    { Write-Host "  ✓ $msg" -ForegroundColor Green }
 function Write-Warn($msg)  { Write-Host "  ⚠ $msg" -ForegroundColor Yellow }
+
+# ============================================================
+# 权限检测：winget 装软件（写 Program Files）需要管理员权限
+# 非管理员时自动用 RunAs 提权重启（触发一次 UAC，用户点"是"）
+# ============================================================
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent())
+    .IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+if (-not $isAdmin) {
+    Write-Warn "当前非管理员权限。winget 安装软件（写 Program Files）需要管理员权限。"
+    Write-Warn "正在请求管理员权限重启... 请在 UAC 弹窗点击「是」。"
+    try {
+        Start-Process -FilePath "powershell.exe" `
+            -ArgumentList @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$PSCommandPath`"") `
+            -Verb RunAs -Wait
+        exit  # 提权实例执行完毕后，本实例退出
+    } catch {
+        Write-Host "✗ 管理员授权被拒绝。无法安装需要管理员权限的软件。" -ForegroundColor Red
+        Write-Host "  你可以：1) 以管理员身份重新运行 setup.ps1；2) 或单独运行不需要管理员的部分。"
+        exit 1
+    }
+}
+Write-Ok "以管理员权限运行中"
 
 Write-Host "win-dev-setup 开始" -ForegroundColor Magenta
 
@@ -147,6 +170,31 @@ if (-not $bash) {
     }
 }
 
+# ---------- CC Switch 配置导入 ----------
+Write-Ok "导入 CC Switch 配置（providers + 通用配置）..."
+$ccSwitchScript = "$RepoRoot\scripts\import-cc-switch.py"
+if (Test-Path $ccSwitchScript) {
+    # 用 python 直接写 cc-switch.db
+    $python = $null
+    foreach ($cand in @(
+        (Get-Command python -ErrorAction SilentlyContinue).Source,
+        "$env:ProgramFiles\Python312\python.exe",
+        "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe"
+    )) {
+        if ($cand -and (Test-Path $cand)) { $python = $cand; break }
+    }
+    if ($python) {
+        & $python $ccSwitchScript
+        if ($LASTEXITCODE -eq 0) {
+            Write-Ok "  CC Switch 配置已导入"
+        } else {
+            Write-Warn "  CC Switch 导入失败（可能 .env 未应用或 CC Switch 在运行）"
+        }
+    } else {
+        Write-Warn "  未找到 python，跳过 CC Switch 导入"
+    }
+}
+
 # ---------- 8. 自动验证 ----------
 Write-Step "8/8 验证安装结果"
 
@@ -181,5 +229,3 @@ if ($allOk) {
     Write-Host "  - 可能原因：软件安装后未重启终端（PATH 未刷新）"
     Write-Host "  - 处理：新开终端再运行 setup.ps1，或手动检查"
 }
-Write-Host "剩余手动步骤："
-Write-Host "  用 CC Switch 导入 providers.json + common_config.json（GUI）"

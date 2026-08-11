@@ -43,8 +43,9 @@ setup.ps1 自动串联：
 2. 配置 Git / Bash / Claude / 镜像源
 3. 应用 .env（需先填）
 4. 自动运行 install-marketplaces.sh → install-plugins.sh → install-git-skills.sh → install-fonts.sh
+5. 自动导入 CC Switch 配置（providers + 通用配置）
 
-完成后只剩两个手动步骤：CC Switch 导入 providers、验证命令。
+完成后只需手动填 `.env`（API keys）。
 
 ---
 
@@ -93,7 +94,10 @@ bash scripts/install-plugins.sh
 bash scripts/install-fonts.sh
 # 默认 v7.9，可指定版本: bash scripts/install-fonts.sh v7.8
 
-# CC Switch：导入 providers.json + common_config.json（GUI 操作）
+# CC Switch 配置（setup.ps1 会自动导入；单独导入时运行）
+python scripts/import-cc-switch.py
+# 会覆盖写 providers（5 个 claude provider）+ common_config 到 cc-switch.db
+
 # Claude skills：setup.ps1 已拷手动放置的到 ~/.claude/skills/
 #   git 来源的（guizang-ppt-skill/stock-analysis）用上面脚本 clone，可 git pull 更新
 ```

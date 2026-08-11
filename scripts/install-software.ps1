@@ -1,7 +1,24 @@
 # 新电脑软件一键安装（winget，全部默认路径）
 # 用法: powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 
-$ErrorActionPreference = 'Stop'
+# 权限检测：Git/Python/Node 写 Program Files 需要管理员
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent())
+    .IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Host "需要管理员权限安装软件（写 Program Files）..." -ForegroundColor Yellow
+    try {
+        Start-Process -FilePath "powershell.exe" `
+            -ArgumentList @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$PSCommandPath`"") `
+            -Verb RunAs -Wait
+        exit
+    } catch {
+        Write-Host "✗ 管理员授权被拒绝，无法安装需要管理员权限的软件" -ForegroundColor Red
+        exit 1
+    }
+}
+
+# 容错：单个软件失败不中断后续
+$ErrorActionPreference = 'Continue'
 Write-Host "=== 检查 winget ===" -ForegroundColor Cyan
 if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
     Write-Error "未找到 winget，请先安装 App Installer（Microsoft Store）"
@@ -23,7 +40,7 @@ foreach ($pkg in $packages) {
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  ✓ $($pkg.Name) 安装完成（默认路径）" -ForegroundColor Green
     } else {
-        Write-Host "  ⚠ $($pkg.Name) 安装可能未完成 (exit=$LASTEXITCODE)，请手动检查" -ForegroundColor Red
+        Write-Host "  ⚠ $($pkg.Name) 安装失败 (exit=$LASTEXITCODE)，继续下一个" -ForegroundColor Red
     }
 }
 
