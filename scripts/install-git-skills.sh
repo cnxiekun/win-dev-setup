@@ -16,7 +16,7 @@ fi
 mkdir -p "$SKILLS_DIR"
 echo "=== 安装 git 来源的 skills → $SKILLS_DIR ==="
 
-python3 - "$MANIFEST" "$SKILLS_DIR" << 'PYEOF'
+python - "$MANIFEST" "$SKILLS_DIR" << 'PYEOF'
 import json, subprocess, sys, os
 manifest_path, skills_dir = sys.argv[1], sys.argv[2]
 with open(manifest_path, encoding='utf-8') as f:

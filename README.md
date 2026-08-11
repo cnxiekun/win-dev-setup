@@ -4,68 +4,66 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 
 ## 覆盖范围
 
-| 类别 | 内容 | 位置 |
-|---|---|---|
-| Git | user、alias、color、proxy、core | `config/git/.gitconfig` |
-| Bash | .bashrc、.bash_profile、.minttyrc | `config/bash/` |
-| Claude Code | 全局 CLAUDE.md、skills、marketplaces | `config/claude/` |
-| CC Switch | providers（脱敏）、通用配置 | `config/cc-switch/` |
-| wmux | daemon/session 参数 | `config/wmux/` |
-| Windows Terminal | settings.json | `config/windows-terminal/` |
+| 类别             | 内容                                 | 位置                         |
+| ---------------- | ------------------------------------ | ---------------------------- |
+| Git              | user、alias、color、core             | `config/git/.gitconfig`    |
+| Bash             | .bashrc、.bash_profile、.minttyrc    | `config/bash/`             |
+| Claude Code      | 全局 CLAUDE.md、skills、marketplaces | `config/claude/`           |
+| CC Switch        | providers（脱敏，仅第三方）、通用配置 | `config/cc-switch/`        |
+| Windows Terminal | settings.json                        | `config/windows-terminal/` |
+
+> 说明：wmux 配置不备份（新电脑装 wmux 自动生成默认）；.gitconfig 的 mvimdiff/proxy 不备份（本机残留）；CC Switch 只备份第三方 provider（DeepSeek/Agnes/Kimi），官方类型自动生成。
 
 ## 安装规范
 
 所有软件用 **winget 装默认路径**（`C:\Program Files` 等），**禁止自定义盘/中文目录**（`D:\软件` 这种会导致 wmux 编码 bug）。
 
-| 软件 | winget 包 |
-|---|---|
-| Git | `Git.Git` |
-| Python 3.12 | `Python.Python.3.12` |
-| Node LTS | `OpenJS.NodeJS.LTS` |
+| 软件        | winget 包                |
+| ----------- | ------------------------ |
+| Git         | `Git.Git`              |
+| Python 3.12 | `Python.Python.3.12`   |
+| Node LTS    | `OpenJS.NodeJS.LTS`    |
 | Claude Code | `Anthropic.ClaudeCode` |
-| wmux | `openwong2kim.wmux` |
+| wmux        | `openwong2kim.wmux`    |
 
 ## 新电脑使用步骤
 
 ### 1. 安装前准备
+
 - 已装好 winget（Win10/11 自带，App Installer）
 - 已装好 Git for Windows（脚本会装，但先手动装可以更快）
 
 ### 2. 一键安装软件
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 ```
 
 ### 3. 填写 API keys
+
 ```powershell
 Copy-Item .env.example .env
 notepad .env   # 填 DEEPSEEK_API_KEY / AGNES_API_KEY / KIMI_API_KEY / TUSHARE_TOKEN / TAVILY_API_KEY
 ```
 
 ### 4. 一键配置
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File setup.ps1
 ```
 
-### 5. 手动完成（无法全自动的部分）
+### 5. 自动安装 skills 和 marketplaces
+
 ```bash
 # 安装 git 来源的 Claude skills（clone 后自带 .git，可 git pull 更新）
 bash scripts/install-git-skills.sh
 # 清单见 config/claude/git-skills.json（guizang-ppt-skill、stock-analysis）
 
-# 安装 Claude Code marketplaces（需要 GitHub 登录）
-claude plugin marketplace add anthropics/skills
-claude plugin marketplace add JimLiu/baoyu-skills
-claude plugin marketplace add taekchef/claude-code-zh-cn
-claude plugin marketplace add anthropics/claude-plugins-official
-claude plugin marketplace add jarrodwatts/claude-hud
-claude plugin marketplace add zarazhangrui/frontend-slides
-claude plugin marketplace add othmanadi/planning-with-files
-claude plugin marketplace add phuryn/pm-skills
-claude plugin marketplace add hugohe3/ppt-master
-claude plugin marketplace add eze-is/web-access
+# 自动添加 Claude Code marketplaces（本质是 git clone，用官方 CLI 自动注册）
+bash scripts/install-marketplaces.sh
+# 清单见 config/claude/marketplaces.json（10 个）
 
-# 安装插件
+# 安装插件（marketplace 添加后，逐个安装）
 claude plugin install <plugin>@<marketplace>
 
 # CC Switch：导入 providers.json + common_config.json（GUI 操作）
@@ -74,6 +72,7 @@ claude plugin install <plugin>@<marketplace>
 ```
 
 ### 6. 验证
+
 ```bash
 git --version
 python --version

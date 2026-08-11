@@ -76,21 +76,5 @@
 	mnemonicprefix = true
 	algorithm = patience
 
-[merge]
-	summary = true
-	verbosity = 1
-	tool = mvimdiff
-
-[mergetool]
-	prompt = false
-	mvimdiff.cmd = mvim -c 'Gdiff' $MERGED
-	mvimdiff.keepbackup = false
-
 [push]
 	default = upstream
-
-[http]
-	proxy = http://127.0.0.1:7897
-
-[https]
-	proxy = http://127.0.0.1:7897
