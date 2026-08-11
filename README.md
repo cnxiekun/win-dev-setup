@@ -4,15 +4,15 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 
 ## 覆盖范围
 
-| 类别             | 内容                                 | 位置                         |
-| ---------------- | ------------------------------------ | ---------------------------- |
-| Git              | user、alias、color、core             | `config/git/.gitconfig`    |
-| Bash             | .bashrc、.bash_profile、.minttyrc    | `config/bash/`             |
-| Claude Code      | 全局 CLAUDE.md、skills、marketplaces | `config/claude/`           |
-| CC Switch        | providers（脱敏，仅第三方）、通用配置 | `config/cc-switch/`        |
-| Windows Terminal | settings.json（含 Maple Mono 字体引用）| `config/windows-terminal/` |
-| 国内镜像源       | pip 清华源、npm npmmirror            | `config/python/`、`config/node/` |
-| 字体             | Maple Mono NF CN（脚本下载安装）      | `scripts/install-fonts.sh` |
+| 类别             | 内容                                    | 位置                                 |
+| ---------------- | --------------------------------------- | ------------------------------------ |
+| Git              | user、alias、color、core                | `config/git/.gitconfig`            |
+| Bash             | .bashrc、.bash_profile、.minttyrc       | `config/bash/`                     |
+| Claude Code      | 全局 CLAUDE.md、skills、marketplaces    | `config/claude/`                   |
+| CC Switch        | providers（脱敏，仅第三方）、通用配置   | `config/cc-switch/`                |
+| Windows Terminal | settings.json（含 Maple Mono 字体引用） | `config/windows-terminal/`         |
+| 国内镜像源       | pip 清华源、npm npmmirror               | `config/python/`、`config/node/` |
+| 字体             | Maple Mono NF CN（脚本下载安装）        | `scripts/install-fonts.sh`         |
 
 ## 安装规范
 
@@ -30,16 +30,49 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 
 ### 一键操作（推荐）
 
-克隆仓库后，**先填 .env，再一条命令完成全部**：
+**第 1 步：克隆仓库**
+
+打开 **PowerShell**（开始菜单搜 PowerShell），执行：
+
+```powershell
+git clone https://github.com/cnxiekun/win-dev-setup.git
+cd win-dev-setup
+```
+
+> 这一步会在当前目录创建 `win-dev-setup` 文件夹并进入它。后续命令都在这个文件夹里执行。
+
+**第 2 步：填写 API keys**
 
 ```powershell
 Copy-Item .env.example .env
-notepad .env   # 填 DEEPSEEK_API_KEY / AGNES_API_KEY / KIMI_API_KEY / TUSHARE_TOKEN / TAVILY_API_KEY
+notepad .env
+```
 
+会弹出记事本打开 `.env` 文件，把里面 5 个占位符改成你的真实 key：
+
+| 变量名 | 填什么 |
+|---|---|
+| `DEEPSEEK_API_KEY` | DeepSeek 平台的 API key（api.deepseek.com） |
+| `AGNES_API_KEY` | Agnes 平台的 API key（api.agnes-ai.cn） |
+| `KIMI_API_KEY` | Kimi/月之暗面平台的 API key（api.moonshot.cn） |
+| `TUSHARE_TOKEN` | Tushare 的 token（股票数据） |
+| `TAVILY_API_KEY` | Tavily 搜索的 API key |
+
+改完保存关闭记事本。
+
+**第 3 步：一键配置**
+
+在同一个 PowerShell（仍在 `win-dev-setup` 目录里）运行：
+
+```powershell
 powershell -ExecutionPolicy Bypass -File setup.ps1
 ```
 
-setup.ps1 自动串联：
+> 第一次会弹出 UAC 授权窗口（装软件需要管理员权限），点「是」。
+> 之后全自动完成，脚本会在最后自动验证 git / python / node / claude 是否可用。
+
+**setup.ps1 自动完成的内容：**
+
 1. winget 装软件（Git/Python/Node/Claude Code/wmux）
 2. 配置 Git / Bash / Claude / 镜像源
 3. 应用 .env
