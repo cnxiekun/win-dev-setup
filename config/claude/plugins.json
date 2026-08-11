@@ -1,0 +1,77 @@
+[
+  {
+    "plugin": "baoyu-skills",
+    "marketplace": "baoyu-skills",
+    "enabled": false
+  },
+  {
+    "plugin": "claude-code-zh-cn",
+    "marketplace": "claude-code-zh-cn",
+    "enabled": true
+  },
+  {
+    "plugin": "claude-hud",
+    "marketplace": "claude-hud",
+    "enabled": true
+  },
+  {
+    "plugin": "claude-md-management",
+    "marketplace": "claude-plugins-official",
+    "enabled": true
+  },
+  {
+    "plugin": "code-review",
+    "marketplace": "claude-plugins-official",
+    "enabled": true
+  },
+  {
+    "plugin": "code-simplifier",
+    "marketplace": "claude-plugins-official",
+    "enabled": true
+  },
+  {
+    "plugin": "document-skills",
+    "marketplace": "anthropic-agent-skills",
+    "enabled": true
+  },
+  {
+    "plugin": "frontend-design",
+    "marketplace": "claude-plugins-official",
+    "enabled": true
+  },
+  {
+    "plugin": "frontend-slides",
+    "marketplace": "frontend-slides",
+    "enabled": false
+  },
+  {
+    "plugin": "planning-with-files",
+    "marketplace": "planning-with-files",
+    "enabled": true
+  },
+  {
+    "plugin": "pm-data-analytics",
+    "marketplace": "pm-skills",
+    "enabled": false
+  },
+  {
+    "plugin": "ppt-master",
+    "marketplace": "ppt-master",
+    "enabled": true
+  },
+  {
+    "plugin": "skill-creator",
+    "marketplace": "claude-plugins-official",
+    "enabled": false
+  },
+  {
+    "plugin": "superpowers",
+    "marketplace": "claude-plugins-official",
+    "enabled": true
+  },
+  {
+    "plugin": "web-access",
+    "marketplace": "web-access",
+    "enabled": true
+  }
+]

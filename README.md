@@ -65,12 +65,13 @@ bash scripts/install-git-skills.sh
 bash scripts/install-marketplaces.sh
 # 清单见 config/claude/marketplaces.json（10 个）
 
+# 自动安装插件（全装，按清单设置启用状态）
+bash scripts/install-plugins.sh
+# 清单见 config/claude/plugins.json（15 个，11 启用 / 4 禁用但保留）
+
 # 安装 Maple Mono NF CN 字体（开源，从 GitHub Releases 下载 ~152MB）
 bash scripts/install-fonts.sh
 # 默认 v7.9，可指定版本: bash scripts/install-fonts.sh v7.8
-
-# 安装插件（marketplace 添加后，逐个安装）
-claude plugin install <plugin>@<marketplace>
 
 # CC Switch：导入 providers.json + common_config.json（GUI 操作）
 # Claude skills：setup.ps1 已拷手动放置的到 ~/.claude/skills/
