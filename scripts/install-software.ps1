@@ -1,4 +1,4 @@
-# 新电脑软件一键安装（winget，全部默认路径）
+# 新电脑软件一键安装（winget，全部默认路径，按依赖顺序，已装则跳过）
 # 用法: powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 
 # 权限检测：Git/Python/Node 写 Program Files 需要管理员
@@ -25,17 +25,40 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
+# ============================================================
+# 软件清单（按依赖顺序排列）
+# 依赖关系：Node → Claude Code（npm 安装）；Git/Python/wmux 独立
+# 版本策略：不写死小版本，用主版本（winget 自动取最新稳定）
+# ============================================================
 $packages = @(
-    @{ Name = 'Git';            Id = 'Git.Git' },
-    @{ Name = 'Python 3.12';    Id = 'Python.Python.3.12' },
-    @{ Name = 'Node.js LTS';    Id = 'OpenJS.NodeJS.LTS' },
-    @{ Name = 'Claude Code';    Id = 'Anthropic.ClaudeCode' },
-    @{ Name = 'wmux';           Id = 'openwong2kim.wmux' }
+    @{ Name = 'Git';            Id = 'Git.Git';            Command = 'git' },
+    @{ Name = 'Python';         Id = 'Python.Python.3';    Command = 'python' },   # 最新 3.x（当前 3.14）
+    @{ Name = 'Node.js LTS';    Id = 'OpenJS.NodeJS.LTS';  Command = 'node' },
+    @{ Name = 'Claude Code';    Id = 'Anthropic.ClaudeCode'; Command = 'claude' },
+    @{ Name = 'wmux';           Id = 'openwong2kim.wmux';  Command = 'wmux' }
 )
+
+# ============================================================
+# 已装检测：用命令行检查（比 winget list 更快更可靠）
+# ============================================================
+function Test-Installed {
+    param([string]$Cmd)
+    if (-not $Cmd) { return $false }
+    return $null -ne (Get-Command $Cmd -ErrorAction SilentlyContinue)
+}
 
 foreach ($pkg in $packages) {
     Write-Host ""
-    Write-Host "=== 安装 $($pkg.Name) ($($pkg.Id)) ===" -ForegroundColor Yellow
+    Write-Host "=== $($pkg.Name) ($($pkg.Id)) ===" -ForegroundColor Yellow
+
+    # 检测是否已装（命令可用则跳过）
+    if (Test-Installed $pkg.Command) {
+        $ver = try { & $pkg.Command --version 2>&1 | Select-Object -First 1 } catch { '' }
+        Write-Host "  ✓ 已安装（$ver），跳过" -ForegroundColor Green
+        continue
+    }
+
+    Write-Host "  安装中..."
     winget install -e --id $pkg.Id --accept-source-agreements --accept-package-agreements --silent
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  ✓ $($pkg.Name) 安装完成（默认路径）" -ForegroundColor Green
@@ -46,12 +69,12 @@ foreach ($pkg in $packages) {
 
 Write-Host ""
 Write-Host "=== 验证 ===" -ForegroundColor Cyan
-foreach ($cmd in @(@{N='git'; C='git --version'}, @{N='python'; C='python --version'}, @{N='node'; C='node --version'})) {
+foreach ($cmd in @('git', 'python', 'node', 'claude')) {
     try {
-        $v = & cmd /c "$($cmd.C) 2>&1"
-        Write-Host "  ✓ $($cmd.N): $v" -ForegroundColor Green
+        $v = & cmd /c "$cmd --version 2>&1"
+        Write-Host "  ✓ $cmd: $v" -ForegroundColor Green
     } catch {
-        Write-Host "  ✗ $($cmd.N) 不可用，可能需要重启终端" -ForegroundColor Red
+        Write-Host "  ✗ $cmd 不可用，可能需要重启终端" -ForegroundColor Red
     }
 }
 

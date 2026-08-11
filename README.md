@@ -18,13 +18,15 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 
 所有软件用 **winget 装默认路径**（`C:\Program Files` 等），**禁止自定义盘/中文目录**（`D:\软件` 这种会导致 wmux 编码 bug）。
 
-| 软件        | winget 包                |
-| ----------- | ------------------------ |
-| Git         | `Git.Git`              |
-| Python 3.12 | `Python.Python.3.12`   |
-| Node LTS    | `OpenJS.NodeJS.LTS`    |
-| Claude Code | `Anthropic.ClaudeCode` |
-| wmux        | `openwong2kim.wmux`    |
+| 软件        | winget 包              | 版本策略 |
+| ----------- | ---------------------- | -------- |
+| Git         | `Git.Git`            | 最新稳定 |
+| Python      | `Python.Python.3`    | **最新 3.x**（不锁死小版本）|
+| Node LTS    | `OpenJS.NodeJS.LTS`  | LTS 最新 |
+| Claude Code | `Anthropic.ClaudeCode` | 最新    |
+| wmux        | `openwong2kim.wmux`    | 最新    |
+
+> **依赖顺序**：Node → Claude Code（npm 安装需要 Node 环境）。脚本已按依赖顺序安装，且**已装的软件会自动检测跳过**（不会重复安装）。
 
 ## 新电脑使用步骤
 
