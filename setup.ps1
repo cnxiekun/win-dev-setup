@@ -111,8 +111,10 @@ if (Test-Path $envFile) {
 
 Write-Host ""
 Write-Host "==================== 完成 ====================" -ForegroundColor Green
-Write-Host "请重启终端，然后："
-Write-Host "  1. 安装 Claude Code marketplace:"
-Write-Host "     claude plugin marketplace add <owner>/<repo>（逐个）"
-Write-Host "  2. 用 CC Switch 导入 providers 和通用配置"
-Write-Host "  3. 验证: git --version / python --version / node --version"
+Write-Host "请重启终端，然后运行以下脚本（已在 scripts/ 下）："
+Write-Host "  1. bash scripts/install-marketplaces.sh   # 自动添加 10 个 marketplace"
+Write-Host "  2. bash scripts/install-git-skills.sh      # clone git 来源的 skills"
+Write-Host "  3. bash scripts/install-fonts.sh           # 安装 Maple Mono NF CN 字体"
+Write-Host "  4. claude plugin install <plugin>@<marketplace>  # 安装插件"
+Write-Host "  5. 用 CC Switch 导入 providers 和通用配置"
+Write-Host "  6. 验证: git --version / python --version / node --version"
