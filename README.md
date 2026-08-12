@@ -64,7 +64,16 @@ notepad .env
 
 > 💡 `.env` 不是隐藏文件，就在 `win-dev-setup` 文件夹根目录。以后想换 key，直接在文件夹里找到 `.env`，用记事本打开改就行（`notepad .env`）。
 
-**第 3 步：一键配置**
+**第 3 步：一键配置（二选一）**
+
+先判断：**这台电脑有没有 Git Bash？**（装 Git 时会带上 Git Bash 终端）
+
+- **没有 git bash**（或不确定）→ 用**方式 A**（会自动装软件，需要点一次 UAC）
+- **已经有 git bash** → 直接**方式 B**（假设软件已装好，只做配置，不弹 UAC）
+
+> 两条路最终效果一样。区别只是：方式 A 从零开始也能把软件装齐；方式 B 假设你已有 Git 等基础软件，更轻量。
+
+**方式 A：PowerShell 引导（没有 git bash 时）**
 
 在同一个 PowerShell（仍在 `win-dev-setup` 目录里）运行：
 
@@ -73,17 +82,22 @@ powershell -ExecutionPolicy Bypass -File setup.ps1
 ```
 
 > 第一次会弹出 UAC 授权窗口（装软件需要管理员权限），点「是」。
-> 之后全自动完成，脚本会在最后自动验证 git / python / node / claude 是否可用。
+> 它先 winget 装 Git/Python/Node/Claude Code/wmux（**已装的自动跳过**），装完自动调用 `setup.sh` 完成全部配置。
 
-**脚本分工（为什么有 PowerShell）：** 新电脑初始只有 PowerShell（bash 要装完 Git 才有），所以：
+**方式 B：直接 bash（已有 git bash 时）**
 
-- **`setup.ps1`（引导）**：提权 + winget 装软件，然后调 `setup.sh`
-- **`setup.sh`（配置，bash）**：拷配置 → 镜像源 → 应用 .env → marketplaces/plugins/skills/fonts → CC Switch → 验证
+打开 **Git Bash**，进入 `win-dev-setup` 目录，运行：
 
-**`setup.ps1` 一键完成的内容：**
+```bash
+bash setup.sh
+```
 
-1. winget 装软件（Git/Python/Node/Claude Code/wmux）
-2. 自动调用 `setup.sh`，完成全部配置：拷配置 → 镜像源 → 应用 .env → 装 skills/插件 → CC Switch 导入 → 验证
+> 跳过软件安装，只做配置：拷配置 → 镜像源 → 应用 .env → 装 skills/插件 → CC Switch → 验证。不弹 UAC。
+
+**`setup.ps1` / `setup.sh` 分工：**
+
+- **`setup.ps1`（引导）**：提权 + winget 装软件 + 调 `setup.sh`。新电脑初始只有 PowerShell（bash 要装完 Git 才有），所以它是唯一的"从零"入口
+- **`setup.sh`（配置，bash）**：拷配置 → 镜像源 → 应用 .env → marketplaces/plugins/skills/fonts → CC Switch → 验证 → 汇总
 
 ---
 
