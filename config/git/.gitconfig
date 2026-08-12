@@ -147,11 +147,12 @@
   required = true
 [gc]
 	auto = 256
-# [http]/[https] proxy：Clash Verge 默认混合端口 7897；新电脑代理端口不同时改这里
+
+# git clone/pull/push 走 Clash 代理访问 GitHub（大陆直连 GitHub 不稳定、易超时）
+# Clash Verge 默认混合端口 7897，新电脑代理端口不同时改这里
+# 提示：若开了 Clash TUN 模式（透明代理，接管全部流量），本段 http.proxy 可去掉，
+#       git 直连也会被 TUN 自动走代理；两者同时保留也互不影响（git 走 127.0.0.1 回环）
 [http]
 	proxy = http://127.0.0.1:7897
 [https]
 	proxy = http://127.0.0.1:7897
-
-# ===== 说明 =====
-
