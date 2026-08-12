@@ -23,8 +23,8 @@ setup.ps1 一键主入口（8 步串起全部：装软件→拷配置→镜像�
 ## 关键约定（改代码前必须知道）
 
 1. **脱敏铁律**：真实 key 只能写进 `.env`，`config/` 里永远只放 `${KEY}` 占位符。改完 `config/` 提交前跑 `grep -r "sk-" config/` 自查。
-2. **依赖顺序**：Node → Claude Code。`scripts/install-software.ps1` 的 `$packages` 数组按依赖顺序排列，加软件时保持顺序、补全 `Name / Id / Command` 三字段。
-3. **路径规范**：所有软件用 winget 装默认路径，**禁止自定义盘 / 中文目录**（`D:\软件` 这种会导致 wmux 编码 bug）。
+2. **安装顺序**：`scripts/install-software.ps1` 的 `$packages` 数组按安装顺序排列，加软件时保持顺序、补全 `Name / Id / Command` 三字段。Claude Code 现走 winget 原生安装，不依赖 npm/Node。
+3. **路径规范**：所有软件用 winget 装默认路径，保持默认即可（winget 默认路径最省心、最可靠，也避免脚本里硬编码路径）。
 4. **已装检测**：install-software.ps1 用 `Get-Command` 检测命令是否存在，已装则跳过，不会重复安装。
 5. **容错**：`setup.ps1` 用 `$ErrorActionPreference = 'Continue'`，单个步骤失败不中断整体流程。
 6. **权限**：非管理员运行时自动 RunAs 提权重启（弹一次 UAC，点「是」）。
@@ -83,9 +83,9 @@ bash scripts/apply-env.sh
 - [x] Maple Mono NF CN 字体下载安装（默认 v7.9）
 
 **已知坑**：
-- wmux 在中文 / 自定义盘安装路径下会出编码 bug → 安装一律默认路径
 - 软件装完 PATH 未刷新 → 新开终端再验证；setup.ps1 末尾会提示
 - CC Switch 导入失败常见原因：`.env` 未应用，或 CC Switch 正在运行占用 db
+- CC Switch 的 skills 同步是**操作驱动**的（只在用户点导入/卸载/切换启用状态时才动文件），不会后台持续覆盖 → **skills 由用户直接维护 `~/.claude/skills/`，不用 CC Switch 管理 skills**；CC Switch 中心的旧记录（`~/.agents/skills/` + db `skills` 表）保留不动即可，不去点它的 Skills 页面就不会干扰
 
 **待办 / 可扩展方向**（未做，供后续继续）：
 - 可考虑支持 macOS / WSL 环境（当前仅 Windows + Git Bash）

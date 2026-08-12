@@ -26,8 +26,8 @@ if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
 }
 
 # ============================================================
-# 软件清单（按依赖顺序排列）
-# 依赖关系：Node → Claude Code（npm 安装）；Git/Python/wmux 独立
+# 软件清单（按安装顺序排列）
+# 各软件相互独立；Node 排在 Claude Code 前（历史经 npm 装需 Node，现 winget 原生装）
 # 版本策略：不写死小版本，用主版本（winget 自动取最新稳定）
 # ============================================================
 $packages = @(
@@ -72,7 +72,7 @@ Write-Host "=== 验证 ===" -ForegroundColor Cyan
 foreach ($cmd in @('git', 'python', 'node', 'claude')) {
     try {
         $v = & cmd /c "$cmd --version 2>&1"
-        Write-Host "  ✓ $cmd: $v" -ForegroundColor Green
+        Write-Host "  ✓ ${cmd}: $v" -ForegroundColor Green
     } catch {
         Write-Host "  ✗ $cmd 不可用，可能需要重启终端" -ForegroundColor Red
     }

@@ -26,7 +26,7 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 | Claude Code | `Anthropic.ClaudeCode` | 最新    |
 | wmux        | `openwong2kim.wmux`    | 最新    |
 
-> **依赖顺序**：Node → Claude Code（npm 安装需要 Node 环境）。脚本已按依赖顺序安装，且**已装的软件会自动检测跳过**（不会重复安装）。
+> **安装顺序**：脚本按清单顺序安装（Git → Python → Node LTS → Claude Code → wmux），各软件相互独立（Claude Code 现走 winget 原生安装，不依赖 npm/Node）。**已装的软件会自动检测跳过**（不会重复安装）。
 
 ## 新电脑使用步骤
 

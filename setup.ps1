@@ -6,10 +6,23 @@
 $ErrorActionPreference = 'Continue'  # 容错：单个步骤失败不中断整体流程
 $RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Home = $env:USERPROFILE
+$pending = @()  # 失败收集：末尾汇总"未完成项 + 重试命令"
 
 function Write-Step($msg) { Write-Host "`n=== $msg ===" -ForegroundColor Cyan }
 function Write-Ok($msg)    { Write-Host "  ✓ $msg" -ForegroundColor Green }
 function Write-Warn($msg)  { Write-Host "  ⚠ $msg" -ForegroundColor Yellow }
+
+function Get-BashPath {
+    # 定位 bash（Git 装到 C:\Program Files\Git 或默认）
+    foreach ($cand in @(
+        (Get-Command bash -ErrorAction SilentlyContinue).Source,
+        "$env:ProgramFiles\Git\bin\bash.exe",
+        "${env:ProgramFiles(x86)}\Git\bin\bash.exe"
+    )) {
+        if ($cand -and (Test-Path $cand)) { return $cand }
+    }
+    return $null
+}
 
 # ============================================================
 # 权限检测：winget 装软件（写 Program Files）需要管理员权限
@@ -40,6 +53,9 @@ Write-Host "win-dev-setup 开始" -ForegroundColor Magenta
 Write-Step "1/8 安装软件（winget 默认路径）"
 if (Test-Path "$RepoRoot\scripts\install-software.ps1") {
     & powershell -ExecutionPolicy Bypass -File "$RepoRoot\scripts\install-software.ps1"
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warn "install-software.ps1 退出码 $LASTEXITCODE"
+    }
 }
 
 # ---------- 2. 拷 Git 配置 ----------
@@ -98,51 +114,32 @@ if (Test-Path "$RepoRoot\config\node\.npmrc") {
 
 # ---------- 6. 应用 .env（API keys）----------
 Write-Step "6/8 应用 .env（API keys）"
+# 统一走 apply-env.sh（bash），逻辑单一实现，避免 PowerShell/bash 两份漂移
 $envFile = "$RepoRoot\.env"
 if (Test-Path $envFile) {
-    Write-Ok "检测到 .env，将占位符替换为真实值"
-    # 读 .env
-    $envMap = @{}
-    Get-Content $envFile | ForEach-Object {
-        if ($_ -match '^\s*([A-Z0-9_]+)\s*=\s*(.+)\s*$') {
-            $envMap[$matches[1]] = $matches[2]
+    $bash = Get-BashPath
+    if ($bash) {
+        & $bash "$RepoRoot\scripts\apply-env.sh"
+        if ($LASTEXITCODE -eq 0) {
+            Write-Ok "已生成 .build/ 目录（含真实 key，勿 commit）"
+        } else {
+            Write-Warn "apply-env.sh 应用失败（退出码 $LASTEXITCODE）"
+            $pending += @{ step = "应用 .env"; cmd = "bash scripts/apply-env.sh" }
         }
+    } else {
+        Write-Warn "未找到 bash，跳过 .env 应用"
+        $pending += @{ step = "应用 .env"; cmd = "bash scripts/apply-env.sh" }
     }
-    # 输出到 .build/（不污染 config/，避免 key 被 commit）
-    $buildDir = "$RepoRoot\.build"
-    $files = Get-ChildItem "$RepoRoot\config" -Recurse -File | Where-Object { $_.Extension -ne '.pyc' }
-    foreach ($file in $files) {
-        $content = [System.IO.File]::ReadAllText($file.FullName)
-        foreach ($key in $envMap.Keys) {
-            $placeholder = "\${$key}"
-            $content = $content.Replace($placeholder, $envMap[$key])
-        }
-        $rel = $file.FullName.Substring("$RepoRoot\config\".Length)
-        $dest = Join-Path $buildDir $rel
-        $destDir = Split-Path -Parent $dest
-        if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir -Force | Out-Null }
-        [System.IO.File]::WriteAllText($dest, $content, (New-Object System.Text.UTF8Encoding $false))
-    }
-    Write-Ok "已生成 .build/ 目录（含真实 key，勿 commit）"
 } else {
     Write-Warn "未找到 .env。请先复制并填写："
     Write-Warn "  Copy-Item $RepoRoot\.env.example $RepoRoot\.env"
     Write-Warn "  notepad $RepoRoot\.env"
+    $pending += @{ step = "填写 .env"; cmd = "Copy-Item .env.example .env && notepad .env" }
 }
 
 # ---------- 7. 自动运行 bash 脚本（marketplaces/plugins/skills/fonts）----------
 Write-Step "7/8 自动运行 bash 脚本（marketplaces → plugins → skills → fonts）"
-
-# 定位 bash（Git 装到 C:\Program Files\Git 或默认）
-$bash = $null
-foreach ($cand in @(
-    (Get-Command bash -ErrorAction SilentlyContinue).Source,
-    "$env:ProgramFiles\Git\bin\bash.exe",
-    "${env:ProgramFiles(x86)}\Git\bin\bash.exe"
-)) {
-    if ($cand -and (Test-Path $cand)) { $bash = $cand; break }
-}
-
+$bash = Get-BashPath
 if (-not $bash) {
     Write-Warn "未找到 bash，跳过脚本运行。请手动执行："
     Write-Warn "  bash scripts/install-marketplaces.sh"
@@ -164,7 +161,8 @@ if (-not $bash) {
             if ($LASTEXITCODE -eq 0) {
                 Write-Ok "  $s 完成"
             } else {
-                Write-Warn "  $s 退出码 $LASTEXITCODE（可手动重试）"
+                Write-Warn "  $s 退出码 $LASTEXITCODE（可稍后重试）"
+                $pending += @{ step = "运行 $s"; cmd = "bash scripts/$s" }
             }
         } else {
             Write-Warn "  $scriptPath 不存在，跳过"
@@ -191,13 +189,15 @@ if (Test-Path $ccSwitchScript) {
             Write-Ok "  CC Switch 配置已导入"
         } else {
             Write-Warn "  CC Switch 导入失败（可能 .env 未应用或 CC Switch 在运行）"
+            $pending += @{ step = "导入 CC Switch 配置"; cmd = "python scripts/import-cc-switch.py" }
         }
     } else {
         Write-Warn "  未找到 python，跳过 CC Switch 导入"
+        $pending += @{ step = "导入 CC Switch 配置"; cmd = "python scripts/import-cc-switch.py" }
     }
 }
 
-# ---------- 8. 自动验证 ----------
+# ---------- 8. 验证安装结果 ----------
 Write-Step "8/8 验证安装结果"
 
 function Test-Command {
@@ -218,16 +218,63 @@ function Test-Command {
 }
 
 $allOk = $true
-$allOk = (Test-Command 'git' '--version') -and $allOk
-$allOk = (Test-Command 'python' '--version') -and $allOk
-$allOk = (Test-Command 'node' '--version') -and $allOk
-$allOk = (Test-Command 'claude' '--version') -and $allOk
+$cmdChecks = @(
+    @{ name = 'git';    arg = '--version'; retry = 'powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1' },
+    @{ name = 'python'; arg = '--version'; retry = 'powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1' },
+    @{ name = 'node';   arg = '--version'; retry = 'powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1' },
+    @{ name = 'claude'; arg = '--version'; retry = 'powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1' }
+)
+foreach ($c in $cmdChecks) {
+    if (Test-Command $c.name $c.arg) {
+        # 命令可用
+    } else {
+        $allOk = $false
+        $pending += @{ step = "安装 $($c.name)"; cmd = $c.retry }
+    }
+}
+
+# 配置存在性检查（比命令可用性更细一层）
+Write-Host ""
+Write-Host "--- 配置存在性 ---" -ForegroundColor Cyan
+$pathChecks = @(
+    @{ desc = "Git 配置";      path = "$Home\.gitconfig" },
+    @{ desc = "Bash 配置";     path = "$Home\.bashrc" },
+    @{ desc = "Claude 全局配置"; path = "$Home\.claude\CLAUDE.md" },
+    @{ desc = "Claude skills"; path = "$Home\.claude\skills" },
+    @{ desc = "pip 清华源";    path = "$Home\.pip\pip.conf" },
+    @{ desc = "npm 镜像";      path = "$Home\.npmrc" }
+)
+foreach ($c in $pathChecks) {
+    if (Test-Path $c.path) {
+        Write-Ok "$($c.desc) ✓"
+    } else {
+        Write-Warn "$($c.desc) ✗ 未找到"
+        $allOk = $false
+    }
+}
+# 字体（Maple Mono，失败可接受——用默认字体）
+$mapleFont = Get-ChildItem "$Home\AppData\Local\Microsoft\Windows\Fonts" -Filter "MapleMono*" -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($mapleFont) {
+    Write-Ok "Maple Mono 字体 ✓ ($($mapleFont.Name))"
+} else {
+    Write-Warn "Maple Mono 字体 ✗ 未安装（可忽略，用默认字体；重试: bash scripts/install-fonts.sh）"
+}
 
 Write-Host ""
-if ($allOk) {
+if ($allOk -and $pending.Count -eq 0) {
     Write-Host "==================== 全部完成，环境就绪 ====================" -ForegroundColor Green
 } else {
-    Write-Host "==================== 完成（部分命令不可用）====================" -ForegroundColor Yellow
-    Write-Host "  - 可能原因：软件安装后未重启终端（PATH 未刷新）"
-    Write-Host "  - 处理：新开终端再运行 setup.ps1，或手动检查"
+    Write-Host "==================== 完成（有未完成项）====================" -ForegroundColor Yellow
+    if (-not $allOk) {
+        Write-Host "  - 部分命令/配置不可用：可能软件安装后未重启终端（PATH 未刷新）"
+        Write-Host "  - 处理：新开终端再运行 setup.ps1，或手动检查"
+    }
+    if ($pending.Count -gt 0) {
+        Write-Host ""
+        Write-Host "--- 未完成项 + 重试命令 ---" -ForegroundColor Yellow
+        foreach ($p in $pending) {
+            Write-Host "  ⚠ $($p.step)" -ForegroundColor Yellow
+            Write-Host "      重试: $($p.cmd)" -ForegroundColor Cyan
+        }
+    }
 }

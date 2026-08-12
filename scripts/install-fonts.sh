@@ -12,7 +12,14 @@ FONT_DEST="${LOCALAPPDATA:-$HOME/AppData/Local}/Microsoft/Windows/Fonts"
 
 echo "=== 下载 Maple Mono NF CN ${VERSION} ==="
 echo "  来源: $DOWNLOAD_URL"
-curl -L -o "$WORK_DIR/$FONT_ZIP" "$DOWNLOAD_URL" --fail --progress-bar
+# 下载失败不阻塞流程：跳过安装，继续用系统默认字体（可稍后重跑本脚本）
+if ! curl -L -o "$WORK_DIR/$FONT_ZIP" "$DOWNLOAD_URL" --fail \
+        --connect-timeout 20 --max-time 180 --progress-bar; then
+  echo "⚠ 字体下载失败（网络原因）。跳过安装，继续使用系统默认字体。"
+  echo "  可稍后重试: bash scripts/install-fonts.sh"
+  rm -rf "$WORK_DIR"
+  exit 0
+fi
 echo "  下载完成: $(du -h "$WORK_DIR/$FONT_ZIP" | cut -f1)"
 
 echo ""
