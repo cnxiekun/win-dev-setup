@@ -11,13 +11,17 @@
 	diff = auto
 	status = auto
 	showbranch = auto
-	branch.current = yellow reverse
-	branch.local = yellow
-	branch.remote = green
-	diff.meta = yellow bold
-	diff.frag = magenta bold
-	diff.old = red
-	diff.new = green
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red
+	new = green
 
 [alias]
 	a = add

@@ -6,6 +6,16 @@
 # 注意: 需先应用 .env（把 ${KEY} 替换成真实 key）
 import sys, os, json, sqlite3
 
+# 需要由 .env 填充的 API key 占位符（与 .env.example 对应）。
+# 注意：只检查这些 key 的占位符是否残留，忽略 ${COLUMNS} 等 bash 运行时变量
+#（它们存在于 statusLine 等命令里，本就不该被替换）。
+API_KEYS = ['DEEPSEEK_API_KEY', 'AGNES_API_KEY', 'KIMI_API_KEY',
+            'TUSHARE_TOKEN', 'TAVILY_API_KEY']
+
+def has_unresolved_placeholder(text):
+    """文本里是否残留未应用的 API key 占位符（${KEY}）。"""
+    return any('${%s}' % k in text for k in API_KEYS)
+
 def load_db_path():
     """定位 cc-switch.db：命令行参数 > 默认位置"""
     if len(sys.argv) > 1:
@@ -32,13 +42,13 @@ def main():
     with open(providers_path, encoding='utf-8') as f:
         providers = json.load(f)
     raw_providers = json.dumps(providers)
-    if '${' in raw_providers:
+    if has_unresolved_placeholder(raw_providers):
         print('✗ providers.json 里还有 ${KEY} 占位符！请先运行 setup.ps1 或 apply-env.sh 应用 .env')
         sys.exit(1)
 
     with open(common_path, encoding='utf-8') as f:
         common_config = json.load(f)
-    if '${' in json.dumps(common_config):
+    if has_unresolved_placeholder(json.dumps(common_config)):
         print('✗ common_config.json 里还有 ${KEY} 占位符！请先运行 setup.ps1 或 apply-env.sh 应用 .env')
         sys.exit(1)
 

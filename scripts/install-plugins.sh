@@ -27,7 +27,7 @@ for p in plugins:
     name = f"{p['plugin']}@{p['marketplace']}"
     enabled = p.get('enabled', True)
     print(f"  安装 {name} ...")
-    r = subprocess.run(['claude', 'plugin', 'install', name], capture_output=True, text=True)
+    r = subprocess.run(['claude.cmd', 'plugin', 'install', name], capture_output=True, text=True)
     if r.returncode != 0:
         err = (r.stdout + r.stderr).lower()
         if 'already' not in err:
@@ -35,10 +35,10 @@ for p in plugins:
             continue
     # 设置启用状态
     if enabled:
-        subprocess.run(['claude', 'plugin', 'enable', name], capture_output=True)
+        subprocess.run(['claude.cmd', 'plugin', 'enable', name], capture_output=True)
         print(f"  ✓ {name} 已启用")
     else:
-        subprocess.run(['claude', 'plugin', 'disable', name], capture_output=True)
+        subprocess.run(['claude.cmd', 'plugin', 'disable', name], capture_output=True)
         print(f"  ✓ {name} 已安装（保持禁用）")
 
 print("\n完成！运行 claude plugin list 查看。")

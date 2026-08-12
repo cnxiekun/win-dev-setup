@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # win-dev-setup 一键配置脚本
 # 新电脑环境恢复：装软件 + 拷配置 + 应用 .env
 # 用法: powershell -ExecutionPolicy Bypass -File setup.ps1
@@ -30,8 +30,10 @@ function Get-BashPath {
 # ============================================================
 $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent())
     .IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+# WDS_SKIP_INSTALL=1：跳过提权检查与软件安装（测试环境 / 已装好软件的机器只跑配置）
+$skipInstall = ($env:WDS_SKIP_INSTALL -eq '1')
 
-if (-not $isAdmin) {
+if (-not $skipInstall -and -not $isAdmin) {
     Write-Warn "当前非管理员权限。winget 安装软件（写 Program Files）需要管理员权限。"
     Write-Warn "正在请求管理员权限重启... 请在 UAC 弹窗点击「是」。"
     try {
@@ -45,17 +47,25 @@ if (-not $isAdmin) {
         exit 1
     }
 }
-Write-Ok "以管理员权限运行中"
+if ($skipInstall) {
+    Write-Warn "WDS_SKIP_INSTALL=1：跳过提权检查与软件安装（仅配置部分）"
+} else {
+    Write-Ok "以管理员权限运行中"
+}
 
 Write-Host "win-dev-setup 开始" -ForegroundColor Magenta
 
 # ---------- 1. 安装软件 ----------
 Write-Step "1/8 安装软件（winget 默认路径）"
-if (Test-Path "$RepoRoot\scripts\install-software.ps1") {
+if ($skipInstall) {
+    Write-Ok "跳过软件安装（WDS_SKIP_INSTALL=1）"
+} elseif (Test-Path "$RepoRoot\scripts\install-software.ps1") {
     & powershell -ExecutionPolicy Bypass -File "$RepoRoot\scripts\install-software.ps1"
     if ($LASTEXITCODE -ne 0) {
         Write-Warn "install-software.ps1 退出码 $LASTEXITCODE"
     }
+} else {
+    Write-Warn "缺少 scripts/install-software.ps1"
 }
 
 # ---------- 2. 拷 Git 配置 ----------
@@ -203,12 +213,16 @@ Write-Step "8/8 验证安装结果"
 function Test-Command {
     param([string]$Name, [string]$Arg)
     try {
-        $output = & $Name $Arg 2>&1 | Select-Object -First 1
-        if ($LASTEXITCODE -eq 0 -and $output) {
-            Write-Ok "$Name → $output"
+        # 注意：不能 `| Select-Object -First 1` 截断管道，否则会提前终止原生命令、
+        # 导致 node/claude 等 $LASTEXITCODE 变成 -1。先取全部输出，显示时才取首行。
+        $output = & $Name $Arg 2>&1
+        $code = if ($null -eq $LASTEXITCODE) { 0 } else { $LASTEXITCODE }
+        $first = $output | Select-Object -First 1
+        if ($code -eq 0 -and $output) {
+            Write-Ok "$Name → $first"
             return $true
         } else {
-            Write-Warn "$Name → 不可用（$output）"
+            Write-Warn "$Name → 不可用（$first）"
             return $false
         }
     } catch {

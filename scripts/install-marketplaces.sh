@@ -33,7 +33,7 @@ for mp in marketplaces:
     if src.endswith('.git'): src = src[:-4]
     src = src.replace('https://github.com/', '')
     print(f"  添加 {name} ({src}) ...")
-    r = subprocess.run(['claude', 'plugin', 'marketplace', 'add', src], capture_output=True, text=True)
+    r = subprocess.run(['claude.cmd', 'plugin', 'marketplace', 'add', src], capture_output=True, text=True)
     if r.returncode == 0:
         print(f"  ✓ {name} 已添加")
     else:

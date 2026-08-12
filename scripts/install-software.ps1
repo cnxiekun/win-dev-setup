@@ -1,4 +1,4 @@
-# 新电脑软件一键安装（winget，全部默认路径，按依赖顺序，已装则跳过）
+﻿# 新电脑软件一键安装（winget，全部默认路径，按依赖顺序，已装则跳过）
 # 用法: powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 
 # 权限检测：Git/Python/Node 写 Program Files 需要管理员
