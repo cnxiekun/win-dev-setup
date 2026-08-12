@@ -4,10 +4,11 @@
 #   1. 提权检查（装软件需要管理员）
 #   2. winget 装软件（install-software.ps1）
 #   3. 调用 setup.sh（bash）完成所有配置
-# 用法: powershell -ExecutionPolicy Bypass -File setup.ps1
+# 用法: powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 # ============================================================
 $ErrorActionPreference = 'Continue'  # 容错：单个步骤失败不中断整体流程
-$RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+# 本脚本在 scripts/ 下，仓库根是它的父目录
+$RepoRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 
 function Write-Step($msg) { Write-Host "`n=== $msg ===" -ForegroundColor Cyan }
 function Write-Ok($msg)    { Write-Host "  ✓ $msg" -ForegroundColor Green }
@@ -71,7 +72,7 @@ if ($skipInstall) {
 Write-Step "2/2 调用 setup.sh（配置全走 bash）"
 $bash = Get-BashPath
 if ($bash) {
-    & $bash "$RepoRoot\setup.sh"
+    & $bash "$RepoRoot\scripts\setup.sh"
     exit $LASTEXITCODE
 } else {
     Write-Warn "未找到 bash。请先手动安装 Git（winget install Git.Git），然后重新运行 setup.ps1。"

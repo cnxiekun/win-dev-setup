@@ -48,4 +48,4 @@ fi
 
 # ---------- 3. 配置 ----------
 echo "> 开始配置..."
-bash setup.sh
+bash scripts/setup.sh

@@ -14,12 +14,12 @@ Windows 新电脑一键配置环境。把当前机器的 git / bash / Claude Cod
 config/   脱敏配置模板 —— 所有真实 API key 一律用 ${KEY} 占位符，安全可提交
 .env      本地真实 key（gitignore 排除，永不入库）
 .build/   应用 .env 后生成的"已填充"副本（gitignore 排除，永不入库）
-scripts/  独立步骤脚本（可单独跑，也可被 setup.sh 串联）
-setup.ps1 引导脚本：提权 + winget 装软件 + 调 setup.sh（新电脑初始只有 PowerShell）
-setup.sh  配置主脚本（bash）：拷配置→镜像源→应用 .env→插件/skills→CC Switch→验证→汇总
+install.sh / install.ps1  一键安装：拉仓库→交互填 key→自动配置
+scripts/  全部脚本：setup.ps1（PS 引导：提权+装软件+调 setup.sh）、
+          setup.sh（bash 配置主脚本）、各 install-*.sh 独立步骤
 ```
 
-**分工**：新电脑初始只有 PowerShell（bash 要装完 Git 才有），所以 PowerShell 只负责引导装软件，**所有配置逻辑走 bash**（`setup.sh`）。已装好 Git 的机器可直接 `bash setup.sh`，无需 PowerShell。
+**分工**：新电脑初始只有 PowerShell（bash 要装完 Git 才有），所以 PowerShell 只负责引导装软件，**所有配置逻辑走 bash**（`setup.sh`）。已装好 Git 的机器可直接 `bash scripts/setup.sh`，无需 PowerShell。
 
 **数据流**：`config/` 模板 + `.env` 真实 key →（`apply-env.sh`，由 setup.sh 调用）→ `.build/` 填充副本 → 拷到目标机器。`config/` 永远保持占位符状态，真实 key 只出现在 `.env` 和 `.build/`。
 
@@ -37,7 +37,7 @@ setup.sh  配置主脚本（bash）：拷配置→镜像源→应用 .env→插�
 
 **一键全自动**（新电脑恢复环境）：
 ```powershell
-powershell -ExecutionPolicy Bypass -File setup.ps1
+powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 ```
 
 **分步执行**（单独跑某步 / 调试时）：
@@ -47,7 +47,7 @@ powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 ```
 ```bash
 # 配置全流程（bash；setup.ps1 装完软件后也会自动调它）
-bash setup.sh
+bash scripts/setup.sh
 # 只装 git 来源的 skills（clone 后自带 .git，可 git pull 更新）
 bash scripts/install-git-skills.sh
 # 只添加 marketplaces（读 config/claude/marketplaces.json）

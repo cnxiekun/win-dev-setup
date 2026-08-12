@@ -69,8 +69,8 @@ if (-not (Test-Path '.env')) {
 $bash = (Get-Command bash -ErrorAction SilentlyContinue).Source
 if ($bash) {
     Write-Host "> 检测到 Git Bash，用 setup.sh 配置..."
-    & $bash "$PWD\setup.sh"
+    & $bash "$PWD\scripts\setup.sh"
 } else {
     Write-Host "> 未找到 bash，用 setup.ps1（先装软件再配置）..."
-    & powershell -NoProfile -ExecutionPolicy Bypass -File "$PWD\setup.ps1"
+    & powershell -NoProfile -ExecutionPolicy Bypass -File "$PWD\scripts\setup.ps1"
 }

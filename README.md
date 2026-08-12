@@ -104,7 +104,7 @@ notepad .env
 在同一个 PowerShell（仍在 `win-dev-setup` 目录里）运行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File setup.ps1
+powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
 ```
 
 > 第一次会弹出 UAC 授权窗口（装软件需要管理员权限），点「是」。
@@ -115,7 +115,7 @@ powershell -ExecutionPolicy Bypass -File setup.ps1
 打开 **Git Bash**，进入 `win-dev-setup` 目录，运行：
 
 ```bash
-bash setup.sh
+bash scripts/setup.sh
 ```
 
 > 跳过软件安装，只做配置：拷配置 → 镜像源 → 应用 .env → 装 skills/插件 → CC Switch → 验证。不弹 UAC。
@@ -136,7 +136,7 @@ powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 
 ```bash
 # 配置全流程（bash，已装好 Git 的机器可直接跑；setup.ps1 也会自动调它）
-bash setup.sh
+bash scripts/setup.sh
 
 # 只装 git 来源的 skills（clone 后自带 .git，可 git pull 更新）
 bash scripts/install-git-skills.sh
@@ -166,13 +166,13 @@ python scripts/import-cc-switch.py
 win-dev-setup/
 ├── install.ps1                 # 一键安装（PS）：拉仓库+填 key+配置
 ├── install.sh                  # 一键安装（bash）：拉仓库+填 key+配置
-├── setup.ps1                  # 引导脚本：提权 + winget 装软件 + 调 setup.sh
-├── setup.sh                   # 配置主脚本（bash）：拷配置+镜像源+.env+插件+CC Switch+验证
 ├── .env.example               # API key 占位符模板
 ├── .gitignore
 ├── config/                    # 脱敏配置
 │   ├── git/  bash/  claude/  cc-switch/  windows-terminal/
 └── scripts/
+    ├── setup.ps1              # 引导脚本：提权 + winget 装软件 + 调 setup.sh
+    ├── setup.sh               # 配置主脚本（bash）：拷配置+镜像源+.env+插件+CC Switch+验证
     ├── install-software.ps1   # winget 批量安装
     ├── install-marketplaces.sh # 添加 marketplaces
     ├── install-plugins.sh     # 安装插件

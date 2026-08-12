@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # setup.sh — win-dev-setup 配置主脚本（bash）
-# 由 setup.ps1 装完软件后自动调用；也可在已装好 Git 的机器上直接运行：bash setup.sh
+# 由 setup.ps1 装完软件后自动调用；也可在已装好 Git 的机器上直接运行：bash scripts/setup.sh
 # 职责：拷配置 → 镜像源 → 应用 .env → 装 marketplaces/plugins/skills/fonts → CC Switch → 验证
 # 容错：单个步骤失败不中断整体（不用 set -e），末尾汇总"未完成项 + 重试命令"
 set -uo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# 本脚本在 scripts/ 下，仓库根是它的父目录
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST_HOME="${HOME:-$USERPROFILE}"
 
 pending=()  # "说明|重试命令"
