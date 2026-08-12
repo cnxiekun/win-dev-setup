@@ -18,6 +18,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# ===== Claude Code 项目级配置（个人环境相关，不入库）=====
+.claude/
+
 # ===== 临时文件 =====
 *.log
 *.bak
