@@ -2,8 +2,7 @@
 # 用法: powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 
 # 权限检测：Git/Python/Node 写 Program Files 需要管理员
-$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent())
-    .IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $isAdmin) {
     Write-Host "需要管理员权限安装软件（写 Program Files）..." -ForegroundColor Yellow
     try {

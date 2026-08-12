@@ -75,13 +75,15 @@ powershell -ExecutionPolicy Bypass -File setup.ps1
 > 第一次会弹出 UAC 授权窗口（装软件需要管理员权限），点「是」。
 > 之后全自动完成，脚本会在最后自动验证 git / python / node / claude 是否可用。
 
-**setup.ps1 自动完成的内容：**
+**脚本分工（为什么有 PowerShell）：** 新电脑初始只有 PowerShell（bash 要装完 Git 才有），所以：
+
+- **`setup.ps1`（引导）**：提权 + winget 装软件，然后调 `setup.sh`
+- **`setup.sh`（配置，bash）**：拷配置 → 镜像源 → 应用 .env → marketplaces/plugins/skills/fonts → CC Switch → 验证
+
+**`setup.ps1` 一键完成的内容：**
 
 1. winget 装软件（Git/Python/Node/Claude Code/wmux）
-2. 配置 Git / Bash / Claude / 镜像源
-3. 应用 .env
-4. 自动运行 install-marketplaces.sh → install-plugins.sh → install-git-skills.sh → install-fonts.sh
-5. 自动导入 CC Switch 配置（providers + 通用配置）
+2. 自动调用 `setup.sh`，完成全部配置：拷配置 → 镜像源 → 应用 .env → 装 skills/插件 → CC Switch 导入 → 验证
 
 ---
 
@@ -93,6 +95,9 @@ powershell -ExecutionPolicy Bypass -File scripts/install-software.ps1
 ```
 
 ```bash
+# 配置全流程（bash，已装好 Git 的机器可直接跑；setup.ps1 也会自动调它）
+bash setup.sh
+
 # 只装 git 来源的 skills（clone 后自带 .git，可 git pull 更新）
 bash scripts/install-git-skills.sh
 
@@ -119,7 +124,8 @@ python scripts/import-cc-switch.py
 
 ```
 win-dev-setup/
-├── setup.ps1                  # 主脚本：装软件+拷配置+应用 .env
+├── setup.ps1                  # 引导脚本：提权 + winget 装软件 + 调 setup.sh
+├── setup.sh                   # 配置主脚本（bash）：拷配置+镜像源+.env+插件+CC Switch+验证
 ├── .env.example               # API key 占位符模板
 ├── .gitignore
 ├── config/                    # 脱敏配置

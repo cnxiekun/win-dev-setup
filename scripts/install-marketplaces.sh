@@ -33,7 +33,13 @@ for mp in marketplaces:
     if src.endswith('.git'): src = src[:-4]
     src = src.replace('https://github.com/', '')
     print(f"  添加 {name} ({src}) ...")
-    r = subprocess.run(['claude.cmd', 'plugin', 'marketplace', 'add', src], capture_output=True, text=True)
+    # 加超时防止 claude 命令网络卡住无限等待
+    try:
+        r = subprocess.run(['claude.cmd', 'plugin', 'marketplace', 'add', src],
+                           capture_output=True, text=True, timeout=120)
+    except subprocess.TimeoutExpired:
+        print(f"  ⚠ {name} 添加超时（120s），跳过（可稍后重试）")
+        continue
     if r.returncode == 0:
         print(f"  ✓ {name} 已添加")
     else:
