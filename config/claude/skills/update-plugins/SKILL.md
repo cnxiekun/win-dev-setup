@@ -5,14 +5,15 @@ description: |
   1. 所有 git 来源的 marketplace 目录（~/.claude/plugins/marketplaces/ 下所有 git 仓库）
   2. 所有已启用的官方插件（通过 claude plugin update 逐个升级）
   3. 所有 git 来源的本地 skills（~/.claude/skills/ 下的 git 仓库）
-  4. 非 git 目录（手动放置的 skills）自动跳过并提示
+  4. 所有由 npx skills 安装的 skill（通过 npx skills update -g 更新）
+  5. 非 git 目录（手动放置的 skills）自动跳过并提示
   不写死任何插件列表 —— 每次运行都自动扫描当前实际安装的内容，后续新装的插件/skills 也能被覆盖。
 
   触发场景：用户要求「更新插件」「升级插件」「一键更新 skills」「update plugins」「检查插件更新」等。
 metadata:
   trigger: 用户要求更新/升级 Claude Code 插件或 skills
-  version: "1.0"
-  last_updated: "2026-08-07"
+  version: "1.1"
+  last_updated: "2026-08-12"
   platform: windows
 ---
 
@@ -76,7 +77,20 @@ for d in */; do
 done
 ```
 
-### 阶段 5：检查非 git 目录（手动 skills）
+### 阶段 5：更新 npx skills 安装的 skill
+
+```bash
+command -v npx >/dev/null 2>&1 && npx --yes skills update -g
+```
+
+`npx skills` 安装的 skill（如 `grill-me`）不是 git 仓库，是 CLI 复制的文件，放在 `~/.agents/skills/` 源目录并符号链接到 `~/.claude/skills/`。它由官方 CLI 管理，必须用 `npx skills update -g` 更新（不能 git pull）。
+
+**注意**：
+- 该命令**天然全量扫描**，不写死列表，符合本 skill 原则
+- 若机器未装 npx 则静默跳过（`command -v npx` 判断）
+- 此命令也会顺带更新其他所有由 npx skills 安装的 skill，不只 grill-me
+
+### 阶段 6：检查非 git 目录（手动 skills）
 
 `~/.claude/skills/` 下非 git 的目录（如 `agnes-image`、`agnes-video` 等手动放置的）无法自动更新，**不要尝试去 git 操作它们**，列出它们并提醒用户：
 - 这些是手动放置的，无版本管理
