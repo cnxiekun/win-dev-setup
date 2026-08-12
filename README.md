@@ -16,7 +16,7 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 
 ## 安装规范
 
-所有软件用 **winget 装默认路径**（`C:\Program Files` 等），**禁止自定义盘/中文目录**（`D:\软件` 这种会导致 wmux 编码 bug）。
+所有软件用 **winget 装默认路径**（`C:\Program Files` 等），保持默认最省心、最可靠。
 
 | 软件        | winget 包              | 版本策略 |
 | ----------- | ---------------------- | -------- |
@@ -28,9 +28,35 @@ Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Cod
 
 > **安装顺序**：脚本按清单顺序安装（Git → Python → Node LTS → Claude Code → wmux），各软件相互独立（Claude Code 现走 winget 原生安装，不依赖 npm/Node）。**已装的软件会自动检测跳过**（不会重复安装）。
 
-## 新电脑使用步骤
+## 方式 1：一行命令（快速开始）
 
-### 一键操作（推荐）
+自动完成：拉取仓库 → 交互填 API key → 配置（装软件 / 镜像源 / 插件 / CC Switch / 验证）。**不用 clone、不用 cd、不用手动建 .env**。
+
+**有 Git Bash：** 打开 Git Bash，粘贴运行：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/cnxiekun/win-dev-setup/master/install.sh | bash
+```
+
+**只有 PowerShell：** 打开 PowerShell，粘贴运行：
+
+```powershell
+irm https://raw.githubusercontent.com/cnxiekun/win-dev-setup/master/install.ps1 | iex
+```
+
+> 运行后会：① 在当前目录创建 `win-dev-setup/`；② 逐个提示你粘贴 5 个 API key（直接回车跳过，可稍后补填）；③ 自动完成配置。装软件会弹一次 UAC，点「是」。
+>
+> ⚠️ **安全提示**：上面命令会直接执行 `github.com/cnxiekun/win-dev-setup` 上的脚本（公开仓库，可先下载查看）。介意的话用下面的方式 2 分步。
+>
+> 💡 **网络**：脚本需要访问 GitHub。装了 Clash Verge 等代理时，记得开 **TUN 模式**（或给 git 配 `http.proxy`），否则拉取可能超时。
+
+---
+
+## 方式 2：分步安装（可控）
+
+适合想看清楚每一步做了什么、或方式 1 拉取失败时。下面分步手动完成。
+
+### 分步步骤
 
 **第 1 步：克隆仓库**
 
@@ -138,6 +164,8 @@ python scripts/import-cc-switch.py
 
 ```
 win-dev-setup/
+├── install.ps1                 # 一键安装（PS）：拉仓库+填 key+配置
+├── install.sh                  # 一键安装（bash）：拉仓库+填 key+配置
 ├── setup.ps1                  # 引导脚本：提权 + winget 装软件 + 调 setup.sh
 ├── setup.sh                   # 配置主脚本（bash）：拷配置+镜像源+.env+插件+CC Switch+验证
 ├── .env.example               # API key 占位符模板
