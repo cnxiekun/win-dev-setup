@@ -1,13 +1,14 @@
 # win-dev-setup
 
-Windows 新电脑一键配置。收集了当前机器的 git / bash / Claude Code / CC Switch / wmux / Windows Terminal 配置（已脱敏），配一键脚本在新电脑恢复环境。
+Windows 新电脑一键配置。收集了当前机器的 git / bash / vim / Claude Code / CC Switch / wmux / Windows Terminal 配置（已脱敏），配一键脚本在新电脑恢复环境。
 
 ## 覆盖范围
 
 | 类别             | 内容                                    | 位置                                 |
 | ---------------- | --------------------------------------- | ------------------------------------ |
-| Git              | user、alias、color、core                | `config/git/.gitconfig`            |
+| Git              | user、alias、color、core、终端提示符     | `config/git/.gitconfig`、`git-prompt.sh` |
 | Bash             | .bashrc、.bash_profile、.minttyrc       | `config/bash/`                     |
+| Vim              | vimrc 配置                              | `config/vim/.vimrc`                |
 | Claude Code      | 全局 CLAUDE.md、skills、marketplaces    | `config/claude/`                   |
 | CC Switch        | providers（脱敏，仅第三方）、通用配置   | `config/cc-switch/`                |
 | Windows Terminal | settings.json（含 Maple Mono 字体引用） | `config/windows-terminal/`         |
@@ -169,7 +170,7 @@ win-dev-setup/
 ├── .env.example               # API key 占位符模板
 ├── .gitignore
 ├── config/                    # 脱敏配置
-│   ├── git/  bash/  claude/  cc-switch/  windows-terminal/
+│   ├── git/  bash/  vim/  claude/  cc-switch/  windows-terminal/
 └── scripts/
     ├── setup.ps1              # 引导脚本：提权 + winget 装软件 + 调 setup.sh
     ├── setup.sh               # 配置主脚本（bash）：拷配置+镜像源+.env+插件+CC Switch+验证
