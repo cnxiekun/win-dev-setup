@@ -22,6 +22,11 @@ if [ -f "$REPO_ROOT/config/git/.gitconfig" ]; then
 else
   warn "缺少 config/git/.gitconfig"
 fi
+# git-prompt.sh（终端提示符）→ ~/.config/git/
+if [ -f "$REPO_ROOT/config/git/git-prompt.sh" ]; then
+  mkdir -p "$DEST_HOME/.config/git"
+  cp "$REPO_ROOT/config/git/git-prompt.sh" "$DEST_HOME/.config/git/git-prompt.sh" && ok "已复制 git-prompt.sh → ~/.config/git/"
+fi
 
 # ---------- 2. 拷 Bash 配置 ----------
 step "2/7 配置 Bash（Git Bash 环境）"
@@ -30,6 +35,10 @@ for f in .bashrc .bash_profile .minttyrc; do
     cp "$REPO_ROOT/config/bash/$f" "$DEST_HOME/$f" && ok "已复制 $f → ~/$f" || warn "复制 $f 失败"
   fi
 done
+# .vimrc（vim 编辑器配置）→ ~/.vimrc
+if [ -f "$REPO_ROOT/config/vim/.vimrc" ]; then
+  cp "$REPO_ROOT/config/vim/.vimrc" "$DEST_HOME/.vimrc" && ok "已复制 .vimrc → ~/.vimrc"
+fi
 
 # ---------- 3. 拷 Claude 配置 ----------
 step "3/7 配置 Claude Code"

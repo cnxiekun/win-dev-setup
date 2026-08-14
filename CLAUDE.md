@@ -75,6 +75,8 @@ bash scripts/apply-env.sh
 | 换字体版本 | `scripts/install-fonts.sh` 的 `VERSION` 默认值 |
 | Windows Terminal 主题/字体 | `config/windows-terminal/settings.json`（含 Maple Mono 字体引用） |
 | 镜像源 | `config/python/pip.conf`（pip 清华源）、`config/node/.npmrc`（npmmirror） |
+| Vim 配置 | `config/vim/.vimrc` |
+| 终端提示符 | `config/git/git-prompt.sh`（含 \u@\h 动态用户名@主机名） |
 | 全局 Claude 行为 | `config/claude/CLAUDE.md`（会被装到目标机器 `~/.claude/`） |
 
 ## 当前状态 / 进度
